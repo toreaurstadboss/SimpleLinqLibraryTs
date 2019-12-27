@@ -9,14 +9,14 @@ declare global {
 
 if (!Array.prototype.FirstOrDefault) {
   Array.prototype.FirstOrDefault = function <T>(condition: predicate<T>): T {
-    let matchingMovies: T[] = this.filter((item: T) => {
+    let matchingItems: T[] = this.filter((item: T) => {
 
       if (condition(item)) {
         return item;
       }
     });
-    if (matchingMovies.length > 0) {
-      return matchingMovies[0];
+    if (matchingItems.length > 0) {
+      return matchingItems[0];
     }
     return null;
   }
@@ -24,14 +24,14 @@ if (!Array.prototype.FirstOrDefault) {
 
 if (!Array.prototype.Where) {
   Array.prototype.Where = function <T>(condition: predicate<T>): T[] {
-    let result: T[] = [];
-    let matchingMovies: T[] = this.filter((item: T) => {
+
+    let matchingItems: T[] = this.filter((item: T) => {
 
       if (condition(item)) {
-        result.push(item);
+        return true;
       }
     });
-    return result;
+    return matchingItems;
   }
 }
 
