@@ -1,4 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { StarWarsMovies } from './starwarsmovies';
+import { Movie } from './movie';
+import './array-extensions';
+import { DOCUMENT } from '@angular/common';
+
 
 @Component({
   selector: 'app-root',
@@ -6,5 +11,20 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'TsExtensions';
+  title = 'Linq TsExtensions demo';
+
+  firstMovieWithBoba: Movie;
+  allMoviesWithLeia: Movie[];
+  starwarsMovies: string;
+
+  constructor(@Inject(DOCUMENT) private document: any) {
+    this.starwarsMovies = JSON.stringify(StarWarsMovies);
+    this.firstMovieWithBoba = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Boba Fett') > 0);
+    this.allMoviesWithLeia = StarWarsMovies.Where<Movie>(m => m.main_characters.indexOf('Princess Leia Organa') > 0);
+    console.log(this.firstMovieWithBoba);
+    console.log(this.allMoviesWithLeia);
+  }
+
+
+
 }
