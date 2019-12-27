@@ -2,8 +2,6 @@ import { Component, Inject } from '@angular/core';
 import { StarWarsMovies } from './starwarsmovies';
 import { Movie } from './movie';
 import './array-extensions';
-import { DOCUMENT } from '@angular/common';
-
 
 @Component({
   selector: 'app-root',
@@ -17,7 +15,7 @@ export class AppComponent {
   allMoviesWithLeia: Movie[];
   starwarsMovies: string;
 
-  constructor(@Inject(DOCUMENT) private document: any) {
+  constructor() {
     this.starwarsMovies = JSON.stringify(StarWarsMovies);
     this.firstMovieWithBoba = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Boba Fett') > 0);
     this.allMoviesWithLeia = StarWarsMovies.Where<Movie>(m => m.main_characters.indexOf('Princess Leia Organa') > 0);
