@@ -32,3 +32,13 @@
   {{allMoviesWithLeia | json}}
 
 </div>
+
+<h3>Select demo - Find all Star Wars Movies titles and episode numbers</h3>
+<code>
+  StarWarsMovies.Select&lt;Movie&gt;("title", "episode_number")
+
+  Match count: {{allTitlesAndEpisodeNumbers.length}}
+</code><br /><br />
+<div class="well">
+  {{allTitlesAndEpisodeNumbers | json}}
+</div>

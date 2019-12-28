@@ -14,13 +14,17 @@ export class AppComponent {
   firstMovieWithBoba: Movie;
   allMoviesWithLeia: Movie[];
   starwarsMovies: string;
+  allTitlesAndEpisodeNumbers: any[];
 
   constructor() {
     this.starwarsMovies = JSON.stringify(StarWarsMovies);
     this.firstMovieWithBoba = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Boba Fett') > 0);
     this.allMoviesWithLeia = StarWarsMovies.Where<Movie>(m => m.main_characters.indexOf('Princess Leia Organa') > 0);
+
     console.log(this.firstMovieWithBoba);
     console.log(this.allMoviesWithLeia);
+    this.allTitlesAndEpisodeNumbers = StarWarsMovies.Select<Movie>("title", "episode_number")
+    console.log(this.allTitlesAndEpisodeNumbers);
   }
 
 }

@@ -4,6 +4,7 @@ declare global {
   interface Array<T> {
     FirstOrDefault<T>(condition: predicate<T>): T;
     Where<T>(condition: predicate<T>): T[];
+    Select<T>(...properties: (keyof T)[]): any[];
   }
 }
 
@@ -21,6 +22,22 @@ if (!Array.prototype.FirstOrDefault) {
     return null;
   }
 }
+
+if (!Array.prototype.Select) {
+  Array.prototype.Select = function <T>(...properties: (keyof T)[]): any[] {
+    let result = [];
+    for (let i = 0; i < this.length; i++) {
+      let item: any = {};
+      for (let j = 0; j < properties.length; j++) {
+        let key = properties[j];
+        item[key] = this[i][properties[j]];
+      }
+      result.push(item);
+    }
+    return result;
+  }
+}
+
 
 if (!Array.prototype.Where) {
   Array.prototype.Where = function <T>(condition: predicate<T>): T[] {
