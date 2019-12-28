@@ -5,6 +5,7 @@ declare global {
     FirstOrDefault<T>(condition: predicate<T>): T;
     Where<T>(condition: predicate<T>): T[];
     Select<T>(...properties: (keyof T)[]): any[];
+    GroupBy<T>(groupFunc: (arg: T) => string): any[];
   }
 }
 
@@ -34,6 +35,26 @@ if (!Array.prototype.Select) {
       }
       result.push(item);
     }
+    return result;
+  }
+}
+
+if (!Array.prototype.GroupBy) {
+  Array.prototype.GroupBy = function <T>(groupFunc: (arg: T) => string): any[] {
+    let groups: any = {};
+    this.forEach(el => {
+      let itemKeyValue: any = groupFunc(el);
+      if (itemKeyValue in groups === false) {
+        groups[itemKeyValue] = [];
+      }
+      groups[itemKeyValue].push(el);
+    });
+    let result = Object.keys(groups).map(key => {
+      return {
+        key: key,
+        values: groups[key]
+      }
+    });
     return result;
   }
 }

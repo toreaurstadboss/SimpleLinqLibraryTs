@@ -42,3 +42,14 @@
 <div class="well">
   {{allTitlesAndEpisodeNumbers | json}}
 </div>
+
+<h3>GroupBy demo - Find all Star Wars Movies starring Jar Jar Binks (i.e. sux) or not and group by them.</h3>
+<pre>
+  StarWarsMovies.GroupBy&lt;Movie&gt;(movie =>
+    return movie.main_characters.indexOf('Jar Jar Binks') >= 0 ? "Movie starring Jar Jar Binks" : "Movie not starring Jar Jar Binks");
+
+  Match count: {{groupedByMoviesWithLando.length}}
+</pre><br /><br />
+<div class="well">
+  {{groupedByMoviesWithLando | json}}
+</div>

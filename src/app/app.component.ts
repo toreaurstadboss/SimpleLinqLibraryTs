@@ -15,6 +15,7 @@ export class AppComponent {
   allMoviesWithLeia: Movie[];
   starwarsMovies: string;
   allTitlesAndEpisodeNumbers: any[];
+  groupedByMoviesWithLando: any[];
 
   constructor() {
     this.starwarsMovies = JSON.stringify(StarWarsMovies);
@@ -23,8 +24,12 @@ export class AppComponent {
 
     console.log(this.firstMovieWithBoba);
     console.log(this.allMoviesWithLeia);
-    this.allTitlesAndEpisodeNumbers = StarWarsMovies.Select<Movie>("title", "episode_number")
+    this.allTitlesAndEpisodeNumbers = StarWarsMovies.Select<Movie>("title", "episode_number");
+    this.groupedByMoviesWithLando = StarWarsMovies.GroupBy<Movie>(movie =>
+      movie.main_characters.indexOf('Jar Jar Binks') >= 0 ? "Movie starring JarJar" : "Movie not starring JarJar");
+
     console.log(this.allTitlesAndEpisodeNumbers);
+    console.log(this.groupedByMoviesWithLando);
   }
 
 }
