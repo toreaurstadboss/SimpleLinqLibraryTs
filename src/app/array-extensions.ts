@@ -6,6 +6,7 @@ declare global {
     Where<T>(condition: predicate<T>): T[];
     Select<T>(...properties: (keyof T)[]): any[];
     GroupBy<T>(groupFunc: (arg: T) => string): any[];
+    EnumerableRange(start: number, count: number): number[];
   }
 }
 
@@ -56,6 +57,19 @@ if (!Array.prototype.GroupBy) {
       }
     });
     return result;
+  }
+}
+
+function* Range(start, count) {
+  for (let x = start; x < start + count; x++) {
+    yield x;
+  }
+}
+
+if (!Array.prototype.EnumerableRange) {
+  Array.prototype.EnumerableRange = function (start: number, count: number): number[] {
+    let generatedRange = [...Range(start, count)];
+    return generatedRange;
   }
 }
 

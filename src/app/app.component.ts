@@ -17,6 +17,8 @@ export class AppComponent {
   allTitlesAndEpisodeNumbers: any[];
   groupedByMoviesWithLando: any[];
 
+  someGeneratedNumbers: number[];
+
   constructor() {
     this.starwarsMovies = JSON.stringify(StarWarsMovies);
     this.firstMovieWithBoba = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Boba Fett') > 0);
@@ -30,6 +32,12 @@ export class AppComponent {
 
     console.log(this.allTitlesAndEpisodeNumbers);
     console.log(this.groupedByMoviesWithLando);
+
+    console.log('Generating some numbers in an enumerable range');
+    for (let num in [].EnumerableRange(1, 10)) {
+      console.log(num);
+    }
+    this.someGeneratedNumbers = [].EnumerableRange(1, 10);
   }
 
 }
