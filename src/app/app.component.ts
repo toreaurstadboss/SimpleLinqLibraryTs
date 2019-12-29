@@ -24,6 +24,7 @@ export class AppComponent {
 
   someGeneratedNumbers: number[];
 
+
   constructor() {
     this.starwarsMovies = JSON.stringify(StarWarsMovies);
     this.firstMovieWithBoba = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Boba Fett') >= 0);

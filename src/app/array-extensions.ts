@@ -10,6 +10,35 @@ declare global {
     EnumerableRange(start: number, count: number): number[];
     Any<T>(condition: predicate<T>): boolean;
     All<T>(condition: predicate<T>): boolean;
+    MaxSelect<T>(property: (keyof T)): number;
+    Max(): number;
+  }
+}
+
+if (!Array.prototype.MaxSelect) {
+  Array.prototype.MaxSelect = function <T>(property: (keyof T)): number {
+    let result: number = Number.MIN_VALUE;
+    this.forEach(element => {
+      let elementValue = element[property];
+      if (typeof elementValue !== 'number')
+        throw Error('The provided property is not of type number! ' + property);
+      if (result < element[property])
+        result = element[property];
+    });
+    return result;
+  }
+}
+
+if (!Array.prototype.Max) {
+  Array.prototype.Max = function (): number {
+    let result: number = Number.MIN_VALUE;
+    this.forEach(element => {
+      if (typeof element !== 'number')
+        throw Error('The provided array contains element that is not of type number! ');
+      if (result < element)
+        result = element;
+    });
+    return result;
   }
 }
 
