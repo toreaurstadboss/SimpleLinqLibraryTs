@@ -12,6 +12,7 @@ export class AppComponent {
   title = 'Linq TsExtensions demo';
 
   firstMovieWithBoba: Movie;
+  lastMovieWithBoba: Movie;
   allMoviesWithLeia: Movie[];
   starwarsMovies: string;
   allTitlesAndEpisodeNumbers: any[];
@@ -21,8 +22,10 @@ export class AppComponent {
 
   constructor() {
     this.starwarsMovies = JSON.stringify(StarWarsMovies);
-    this.firstMovieWithBoba = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Boba Fett') > 0);
-    this.allMoviesWithLeia = StarWarsMovies.Where<Movie>(m => m.main_characters.indexOf('Princess Leia Organa') > 0);
+    this.firstMovieWithBoba = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Boba Fett') >= 0);
+    this.allMoviesWithLeia = StarWarsMovies.Where<Movie>(m => m.main_characters.indexOf('Princess Leia Organa') >= 0);
+
+    this.lastMovieWithBoba = StarWarsMovies.LastOrDefault<Movie>(m => m.main_characters.indexOf('Boba Fett') >= 0);
 
     console.log(this.firstMovieWithBoba);
     console.log(this.allMoviesWithLeia);

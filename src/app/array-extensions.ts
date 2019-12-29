@@ -3,6 +3,7 @@ declare global {
   type predicate<T> = (arg: T) => boolean;
   interface Array<T> {
     FirstOrDefault<T>(condition: predicate<T>): T;
+    LastOrDefault<T>(condition: predicate<T>): T;
     Where<T>(condition: predicate<T>): T[];
     Select<T>(...properties: (keyof T)[]): any[];
     GroupBy<T>(groupFunc: (arg: T) => string): any[];
@@ -13,15 +14,20 @@ declare global {
 if (!Array.prototype.FirstOrDefault) {
   Array.prototype.FirstOrDefault = function <T>(condition: predicate<T>): T {
     let matchingItems: T[] = this.filter((item: T) => {
-
-      if (condition(item)) {
+      if (condition(item))
         return item;
-      }
     });
-    if (matchingItems.length > 0) {
-      return matchingItems[0];
-    }
-    return null;
+    return matchingItems.length > 0 ? matchingItems[0] : null;
+  }
+}
+
+if (!Array.prototype.LastOrDefault) {
+  Array.prototype.LastOrDefault = function <T>(condition: predicate<T>): T {
+    let matchingItems: T[] = this.filter((item: T) => {
+      if (condition(item))
+        return item;
+    });
+    return matchingItems.length > 0 ? matchingItems[matchingItems.length - 1] : null;
   }
 }
 

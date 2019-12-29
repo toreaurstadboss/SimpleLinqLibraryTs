@@ -21,6 +21,15 @@
   {{firstMovieWithBoba | json}}
 </div>
 
+<h3>LastOrDefault demo - Find last Star Wars Movie with Boba Fett</h3>
+<code>
+  StarWarsMovies.LastOrDefault&lt;Movie&gt;(m => m.main_characters.indexOf('Boba Fett') > 0)
+  Match count: 0..1
+</code><br /><br />
+<div class="well">
+  {{lastMovieWithBoba | json}}
+</div>
+
 
 <h3>Where demo - Find all Star Wars Movies with Pricess Leia</h3>
 <code>
