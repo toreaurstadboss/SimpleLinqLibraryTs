@@ -30,6 +30,22 @@
   {{lastMovieWithBoba | json}}
 </div>
 
+<h3>Any demo - Any movie starring Jar Jar Binks</h3>
+<code>
+  StarWarsMovies.Any&lt;Movie&gt;(m => m.main_characters.indexOf('Jar Jar Binks') >= 0);
+</code><br /><br />
+<div class="well">
+  {{movieStarringJarJarBinks | json}}
+</div>
+
+<h3>All demo - All movie starring SkyWalker something (e.g. Anakin or Luke SkyWalker..) - doing case insensitive search
+  below. Note using Any operator also here.</h3>
+<code>
+  StarWarsMovies.All&lt;Movie(m => m.main_characters.Any&lt;string&gt;(ch => ch.search(/SkyWalker/i) >= 0));
+</code><br /><br />
+<div class="well">
+  {{movieStarringSomeOneSkyWalker | json}}
+</div>
 
 <h3>Where demo - Find all Star Wars Movies with Pricess Leia</h3>
 <code>

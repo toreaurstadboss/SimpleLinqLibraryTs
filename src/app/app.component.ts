@@ -18,6 +18,10 @@ export class AppComponent {
   allTitlesAndEpisodeNumbers: any[];
   groupedByMoviesWithLando: any[];
 
+  movieStarringJarJarBinks: boolean;
+
+  movieStarringSomeOneSkyWalker: boolean;
+
   someGeneratedNumbers: number[];
 
   constructor() {
@@ -41,6 +45,9 @@ export class AppComponent {
       console.log(num);
     }
     this.someGeneratedNumbers = [].EnumerableRange(1, 10);
+
+    this.movieStarringJarJarBinks = StarWarsMovies.Any<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') >= 0);
+    this.movieStarringSomeOneSkyWalker = StarWarsMovies.All<Movie>(m => m.main_characters.Any<string>(ch => ch.search(/SkyWalker/i) >= 0));
   }
 
 }

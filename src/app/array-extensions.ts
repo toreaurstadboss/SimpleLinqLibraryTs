@@ -8,6 +8,8 @@ declare global {
     Select<T>(...properties: (keyof T)[]): any[];
     GroupBy<T>(groupFunc: (arg: T) => string): any[];
     EnumerableRange(start: number, count: number): number[];
+    Any<T>(condition: predicate<T>): boolean;
+    All<T>(condition: predicate<T>): boolean;
   }
 }
 
@@ -18,6 +20,37 @@ if (!Array.prototype.FirstOrDefault) {
         return item;
     });
     return matchingItems.length > 0 ? matchingItems[0] : null;
+  }
+}
+
+if (!Array.prototype.Any) {
+  Array.prototype.Any = function <T>(condition: predicate<T>): boolean {
+    if (this.length === 0)
+      return false;
+    let result: boolean = false;
+    for (let index = 0; index < this.length; index++) {
+      const element = this[index];
+      if (condition(element)) {
+        result = true;
+        break;
+      }
+    }
+    return result;
+  }
+}
+
+if (!Array.prototype.All) {
+  Array.prototype.All = function <T>(condition: predicate<T>): boolean {
+    if (this.length === 0)
+      return false;
+    let result: boolean = true;
+    for (let index = 0; index < this.length; index++) {
+      const element = this[index];
+      if (!condition(element)) {
+        result = false;
+      }
+    }
+    return result;
   }
 }
 
