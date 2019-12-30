@@ -1,6 +1,7 @@
 export { } //creating a module of below code
 declare global {
   type predicate<T> = (arg: T) => boolean;
+  type numericValue<T> = (arg: T) => any;
   interface Array<T> {
     FirstOrDefault<T>(condition: predicate<T>): T;
     LastOrDefault<T>(condition: predicate<T>): T;
@@ -12,6 +13,18 @@ declare global {
     All<T>(condition: predicate<T>): boolean;
     MaxSelect<T>(property: (keyof T)): number;
     Max(): number;
+    OrderBy<T>(sortMember: numericValue<T>): T[];
+  }
+}
+
+if (!Array.prototype.OrderBy) {
+  Array.prototype.OrderBy = function <T>(sortMember: numericValue<T>): T[] {
+    let result = this.sort(function (a, b) {
+      let aValue = sortMember(a);
+      let bValue = sortMember(b);
+      return aValue - bValue;
+    });
+    return result;
   }
 }
 
