@@ -1,7 +1,7 @@
 export { } //creating a module of below code
 declare global {
   type predicate<T> = (arg: T) => boolean;
-  type numericValue<T> = (arg: T) => any;
+  type sortingValue<T> = (arg: T) => any;
   interface Array<T> {
     FirstOrDefault<T>(condition: predicate<T>): T;
     LastOrDefault<T>(condition: predicate<T>): T;
@@ -13,18 +13,30 @@ declare global {
     All<T>(condition: predicate<T>): boolean;
     MaxSelect<T>(property: (keyof T)): number;
     Max(): number;
-    OrderBy<T>(sortMember: numericValue<T>): T[];
+    OrderBy<T>(sortMember: sortingValue<T>): T[];
+    ThenBy<T>(sortMember: sortingValue<T>): T[];
   }
 }
 
 if (!Array.prototype.OrderBy) {
-  Array.prototype.OrderBy = function <T>(sortMember: numericValue<T>): T[] {
+  Array.prototype.OrderBy = function <T>(sortMember: sortingValue<T>): T[] {
     let result = this.sort(function (a, b) {
       let aValue = sortMember(a);
       let bValue = sortMember(b);
-      return aValue - bValue;
+      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
     });
     return result;
+  }
+}
+
+if (!Array.prototype.ThenBy) {
+  Array.prototype.ThenBy = function <T>(sortMember: sortingValue<T>): T[] {
+    //let inputArray = arguments.callee.caller;
+    if (!Array.isArray(this)) {
+      throw Error('Input array must be actually an array!');
+    }
+    return this.OrderBy(sortMember);
+    //return inputArray.OrderBy<T>(sortMember); //same implementation
   }
 }
 
