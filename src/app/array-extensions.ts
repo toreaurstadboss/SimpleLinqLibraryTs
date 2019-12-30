@@ -16,7 +16,7 @@ declare global {
     OrderBy<T>(sortMember: sortingValue<T>): T[];
     ThenBy<T>(sortMember: sortingValue<T>): T[];
     OfType<T>(compareObject: T): T[];
-    EqualTo<T>(compareArray: T): boolean;
+    SequenceEqual<T>(compareArray: T): boolean;
     Take<T>(count: number): T[];
     Skip<T>(count: number): T[];
   }
@@ -50,8 +50,8 @@ if (!Array.prototype.Skip) {
   }
 }
 
-if (!Array.prototype.EqualTo) {
-  Array.prototype.EqualTo = function <T>(compareArray: T): boolean {
+if (!Array.prototype.SequenceEqual) {
+  Array.prototype.SequenceEqual = function <T>(compareArray: T): boolean {
     if (!Array.isArray(this) || !Array.isArray(compareArray) || this.length !== compareArray.length)
       return false;
     var arr1 = this.concat().sort();
@@ -82,7 +82,7 @@ function isOfSimilarShape<T>(input: any, compareObject: T): boolean {
   let propsOfInput = Object.keys(input);
   let propsOfCompareObject = Object.keys(compareObject);
   //debugger
-  let sameShapeOfInputAndCompareObject = propsOfInput.EqualTo(propsOfCompareObject);
+  let sameShapeOfInputAndCompareObject = propsOfInput.SequenceEqual(propsOfCompareObject);
   return sameShapeOfInputAndCompareObject;
 }
 
