@@ -15,6 +15,22 @@ declare global {
     Max(): number;
     OrderBy<T>(sortMember: sortingValue<T>): T[];
     ThenBy<T>(sortMember: sortingValue<T>): T[];
+    OfType<T>(compareObject: T): T[];
+    EqualTo<T>(compareArray: T): boolean;
+  }
+}
+
+if (!Array.prototype.EqualTo) {
+  Array.prototype.EqualTo = function <T>(compareArray: T): boolean {
+    if (!Array.isArray(this) || !Array.isArray(compareArray) || this.length !== compareArray.length)
+      return false;
+    var arr1 = this.concat().sort();
+    var arr2 = compareArray.concat().sort();
+    for (var i = 0; i < arr1.length; i++) {
+      if (arr1[i] !== arr2[i])
+        return false;
+    }
+    return true;
   }
 }
 
@@ -24,6 +40,30 @@ if (!Array.prototype.OrderBy) {
       let aValue = sortMember(a);
       let bValue = sortMember(b);
       return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+    });
+    return result;
+  }
+}
+
+function isOfSimilarShape<T>(input: any, compareObject: T): boolean {
+  if (input === undefined || input === null || compareObject === undefined || compareObject === null)
+    return false;
+
+  let propsOfInput = Object.keys(input);
+  let propsOfCompareObject = Object.keys(compareObject);
+  //debugger
+  let sameShapeOfInputAndCompareObject = propsOfInput.EqualTo(propsOfCompareObject);
+  return sameShapeOfInputAndCompareObject;
+}
+
+if (!Array.prototype.OfType) {
+  Array.prototype.OfType = function <T>(compareObject: T): T[] {
+    let result: T[] = [];
+    this.forEach(el => {
+      //debugger
+      let t: T = null;
+      if (isOfSimilarShape(el, compareObject))
+        result.push(el);
     });
     return result;
   }
