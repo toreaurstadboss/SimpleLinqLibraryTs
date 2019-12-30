@@ -1,3 +1,6 @@
+import { StarWarsMovies } from "./starwarsmovies";
+import { Movie } from './movie';
+
 class SomeClass {
   Num: number;
   Name: string;
@@ -9,6 +12,28 @@ class SomeOtherClass {
 }
 
 describe('Array Extensions tests', () => {
+
+  it('can take two items using Take(2)', () => {
+    let starwarsMovies = StarWarsMovies;
+    let firstTwoMovies = starwarsMovies.Take<Movie>(2).Select<Movie>("title").map(m => m.title);
+    expect(firstTwoMovies[0].toLowerCase()).toContain("phantom menace");
+    expect(firstTwoMovies[1].toLowerCase()).toContain("attack of the clones");
+  });
+
+  it('can take two items using Skip(4)', () => {
+    let starwarsMovies = StarWarsMovies;
+    let lastTwoMovies = starwarsMovies.Skip<Movie>(4).Select<Movie>("title").map(m => m.title);
+    expect(lastTwoMovies[0].toLowerCase()).toContain("empire strikes back");
+    expect(lastTwoMovies[1].toLowerCase()).toContain("return of the jedi");
+  });
+
+  it('can take next last movie using Skip(4).Take(1)', () => {
+    let starwarsMovies = StarWarsMovies;
+    let fiftMovie = starwarsMovies.Skip<Movie>(4).Take(1).Select<Movie>("title").map(m => m.title);
+    expect(fiftMovie[0].toLowerCase()).toContain("empire strikes back");
+    expect(fiftMovie.length).toBe(1);
+
+  });
 
   it('can find desired items using OfType of type T', () => {
     let someMixedArray: any[] = [];

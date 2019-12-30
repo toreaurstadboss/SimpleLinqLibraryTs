@@ -17,6 +17,36 @@ declare global {
     ThenBy<T>(sortMember: sortingValue<T>): T[];
     OfType<T>(compareObject: T): T[];
     EqualTo<T>(compareArray: T): boolean;
+    Take<T>(count: number): T[];
+    Skip<T>(count: number): T[];
+  }
+}
+
+if (!Array.prototype.Take) {
+  Array.prototype.Take = function <T>(count: number): T[] {
+    if (!Array.isArray(this))
+      throw Error('The object this must be of type array!');
+    let clonedArray = [...this];
+    let result: T[] = [];
+    for (let index = 0; index < count; index++) {
+      if (index >= clonedArray.length)
+        break;
+      result.push(clonedArray[index]);
+    }
+    return result;
+  }
+}
+
+if (!Array.prototype.Skip) {
+  Array.prototype.Skip = function <T>(count: number): T[] {
+    if (!Array.isArray(this))
+      throw Error('The object this must be of type array!');
+    let clonedArray = [...this];
+    let result: T[] = [];
+    for (let index = count; index < this.length; index++) {
+      result.push(clonedArray[index]);
+    }
+    return result;
   }
 }
 
