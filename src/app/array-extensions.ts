@@ -20,6 +20,8 @@ declare global {
     Max(): any;
     Min(): any;
     Sum(): any;
+    Distinct<T>(): T[];
+    DistinctBy<T>(property: (keyof T)): any;
     SumSelect<T>(property: (keyof T)): any;
     Intersect<T>(otherArray: T[]): T[];
     IntersectSelect<T>(property: (keyof T), otherArray: T[]): T[];
@@ -38,6 +40,31 @@ declare global {
     ElementAtOrDefault<T>(index: number);
     Aggregate<T>(accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
     AggregateSelect<T>(property: (keyof T), accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
+  }
+}
+
+if (!Array.prototype.Distinct) {
+  Array.prototype.Distinct = function <T>(): T[] {
+    if (this === null || this === undefined) {
+      return [];
+    }
+    let distinctRunOnArray = this.filter((value, index, array) => array.indexOf(value) === index);
+    return distinctRunOnArray;
+  }
+}
+
+if (!Array.prototype.DistinctBy) {
+  Array.prototype.DistinctBy = function <T>(property: (keyof T)): T[] {
+    if (this === null || this === undefined) {
+      return [];
+    }
+    let filteringArray = this.Select(property).map(n => n[property]);
+
+    let distinctRunOnArray = this.filter((value, index, array) => {
+      let valueProperty = value[property];
+      return filteringArray.indexOf(valueProperty) === index;
+    });
+    return distinctRunOnArray;
   }
 }
 

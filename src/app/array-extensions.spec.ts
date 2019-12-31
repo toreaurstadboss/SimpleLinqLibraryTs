@@ -57,6 +57,28 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
     expect(result).toBe(17.4);
   });
 
+  it('can filter out duplicates using DistinctBy on array of items of objects', () => {
+    let someArray: Student[] = [];
+    someArray.push(<Student>{ StudentID: 1, StudentName: "John", Age: 13 });
+    someArray.push(<Student>{ StudentID: 2, StudentName: "Moin", Age: 21 });
+    someArray.push(<Student>{ StudentID: 2, StudentName: "Moin", Age: 21 });
+    someArray.push(<Student>{ StudentID: 4, StudentName: "Ram", Age: 20 });
+    someArray.push(<Student>{ StudentID: 5, StudentName: "Ron", Age: 15 });
+    let expectedArray: Student[] = [];
+    expectedArray.push(<Student>{ StudentID: 1, StudentName: "John", Age: 13 });
+    expectedArray.push(<Student>{ StudentID: 2, StudentName: "Moin", Age: 21 });
+    expectedArray.push(<Student>{ StudentID: 4, StudentName: "Ram", Age: 20 });
+    expectedArray.push(<Student>{ StudentID: 5, StudentName: "Ron", Age: 15 });
+    let result = someArray.DistinctBy<Student>("StudentID");
+    expect(result).toEqual(expectedArray);
+  });
+
+  it('can filter out duplicates using Distinct on array of items of numbers', () => {
+    let someNums = [1, 2, 2, 3, 3, 4, 5, 6, 7, 7, 1];
+    let someNumsRemovedDuplicates = someNums.Distinct();
+    expect(someNumsRemovedDuplicates).toEqual([1, 2, 3, 4, 5, 6, 7,]);
+  });
+
   it('can average items to expected result using AverageSelect on array of items of numbers', () => {
     let someNums = [1, 2, 3, 4, 5];
     let result = someNums.Average();
