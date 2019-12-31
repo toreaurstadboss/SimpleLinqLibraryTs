@@ -22,6 +22,8 @@ declare global {
     OfType<T>(compareObject: T): T[];
     SequenceEqual<T>(compareArray: T): boolean;
     Take<T>(count: number): T[];
+    TakeWhile<T>(condition: predicate<T>): T[];
+    SkipWhile<T>(condition: predicate<T>): T[];
     Skip<T>(count: number): T[];
     defaultComparerSort<T>(x: T, y: T);
     ElementAt<T>(index: number);
@@ -93,6 +95,41 @@ if (!Array.prototype.Take) {
     for (let index = 0; index < count; index++) {
       if (index >= clonedArray.length)
         break;
+      result.push(clonedArray[index]);
+    }
+    return result;
+  }
+}
+
+if (!Array.prototype.TakeWhile) {
+  Array.prototype.TakeWhile = function <T>(condition: predicate<T>): T[] {
+    if (!Array.isArray(this))
+      throw Error('The object this must be of type array!'); //this should not occur..
+    if (this === null || this === undefined || this.length === 0)
+      return [];
+    let clonedArray = [...this];
+    let result: T[] = [];
+    for (let index = 0; index < clonedArray.length; index++) {
+      if (condition(this[index]))
+        result.push(clonedArray[index]);
+      else
+        break; //takewhile - exit if condition no longer is viable
+    }
+    return result;
+  }
+}
+
+if (!Array.prototype.SkipWhile) {
+  Array.prototype.SkipWhile = function <T>(condition: predicate<T>): T[] {
+    if (!Array.isArray(this))
+      throw Error('The object this must be of type array!'); //this should not occur..
+    if (this === null || this === undefined || this.length === 0)
+      return [];
+    let clonedArray = [...this];
+    let result: T[] = [];
+    for (let index = 0; index < clonedArray.length; index++) {
+      if (condition(this[index]))
+        continue;
       result.push(clonedArray[index]);
     }
     return result;

@@ -11,7 +11,7 @@ class SomeOtherClass {
   SomeName: string;
 }
 
-describe('Array Extensions tests', () => {
+describe('Array Extensions tests for TsExtensions Linq esque library', () => {
 
   it('can take two items using Take(2)', () => {
     let starwarsMovies = StarWarsMovies;
@@ -48,6 +48,16 @@ describe('Array Extensions tests', () => {
     console.log(filteredArrayBySpecifiedType);
 
     expect(filteredArrayBySpecifiedType.All(item => <SomeClass>item !== undefined)).toBe(true, "Expected only items of type SomeOtherClass in the filtered array after running OfType of SomeOtherClass on it.");
+  });
+
+  it('can take while using TakeWhile upon predicate the expected sequence', () => {
+    let someArray = [2, 4, 8, 12, 18, 13, 11];
+    expect(someArray.TakeWhile<any>(x => x % 2 == 0)).toEqual([2, 4, 8, 12, 18]);
+  });
+
+  it('can skip while using SkipWhile upon predicate the expected sequence', () => {
+    let someArray = [2, 4, 8, 12, 18, 13, 11];
+    expect(someArray.SkipWhile<any>(x => x % 2 == 0)).toEqual([13, 11]);
   });
 
   it('can intersect two arrays and return expected', () => {
