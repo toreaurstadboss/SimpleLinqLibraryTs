@@ -22,6 +22,30 @@ declare global {
     Take<T>(count: number): T[];
     Skip<T>(count: number): T[];
     defaultComparerSort<T>(x: T, y: T);
+    ElementAt<T>(index: number);
+    ElementAtOrDefault<T>(index: number);
+  }
+}
+
+if (!Array.prototype.ElementAt) {
+  Array.prototype.ElementAt = function <T>(index: number) {
+    if (index < 0)
+      throw Error('Index must be a positive number!');
+    if (index > this.length) {
+      throw Error('Index must not be out of bounds! Max length is: ' + index);
+    }
+    return this[index];
+  }
+}
+
+if (!Array.prototype.ElementAtOrDefault) {
+  Array.prototype.ElementAt = function <T>(index: number) {
+    if (index < 0)
+      throw Error('Index must be a positive number!');
+    if (index > this.length) {
+      return null;
+    }
+    return this[index];
   }
 }
 
