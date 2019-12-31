@@ -50,6 +50,21 @@ describe('Array Extensions tests', () => {
     expect(filteredArrayBySpecifiedType.All(item => <SomeClass>item !== undefined)).toBe(true, "Expected only items of type SomeOtherClass in the filtered array after running OfType of SomeOtherClass on it.");
   });
 
+  it('can intersect two arrays and return expected', () => {
+    let someArray = [1, 2, 3, 4, 5, 6, 7];
+    let otherArray = [5, 6, 7, 9, 11];
+    let intersection = someArray.Intersect(otherArray);
+    expect(intersection).toEqual([5, 6, 7]);
+  });
+
+  it('can intersect two arrays and project out property and return expected', () => {
+    let someArray = [{ Country: 'Norway', Capital: 'Oslo' }, { Country: 'Denmark', Capital: 'Copenhagen' }, { Country: 'Burkina Faso', Capital: 'Ougadougou' }, { Country: 'Finland', Capital: 'Helsinki' }];
+    let otherArray = [{ Country: 'France', Capital: 'Paris' }, { Country: 'Germany', Capital: 'Berlin' }, { Country: 'Burkina Faso', Capital: 'Ougadougou' }, { Country: 'Finland', Capital: 'Helsinki' }];
+
+    let intersection = someArray.IntersectSelect("Country", otherArray);
+    expect(intersection).toEqual([{ Country: 'Burkina Faso', Capital: 'Ougadougou' }, { Country: 'Finland', Capital: 'Helsinki' }]);
+  });
+
   it('can find maximum of arrays using Max,', () => {
     let inputArray = [1, 2, 3, 4, 5, 6, 7, 15, 4];
     expect(inputArray.Max()).toBe(15);

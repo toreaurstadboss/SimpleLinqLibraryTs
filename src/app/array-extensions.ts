@@ -14,6 +14,8 @@ declare global {
     MaxSelect<T>(property: (keyof T)): any;
     Max(): any;
     Min(): any;
+    Intersect<T>(otherArray: T[]): T[];
+    IntersectSelect<T>(property: (keyof T), otherArray: T[]): T[];
     MinSelect<T>(property: (keyof T)): any;
     OrderBy<T>(sortMember: sortingValue<T>): T[];
     ThenBy<T>(sortMember: sortingValue<T>): T[];
@@ -24,6 +26,39 @@ declare global {
     defaultComparerSort<T>(x: T, y: T);
     ElementAt<T>(index: number);
     ElementAtOrDefault<T>(index: number);
+  }
+}
+
+if (!Array.prototype.Intersect) {
+  Array.prototype.Intersect = function <T>(otherArray: T[]): T[] {
+    if (otherArray === undefined || otherArray === null)
+      return [];
+    if (this === undefined || this === null)
+      return [];
+    let result = [];
+    this.forEach(el => {
+      if (otherArray.Any(item => item == el)) {
+        result.push(el);
+      }
+    });
+    return result;
+  }
+}
+
+if (!Array.prototype.IntersectSelect) {
+  Array.prototype.IntersectSelect = function <T>(property: (keyof T), otherArray: T[]): T[] {
+    if (otherArray === undefined || otherArray === null)
+      return [];
+    if (this === undefined || this === null)
+      return [];
+    let result = [];
+    this.forEach(el => {
+      let itemValue = el[property];
+      if (otherArray.Select(property).map(n => n[property]).Any(x => x == itemValue)) {
+        result.push(el);
+      }
+    });
+    return result;
   }
 }
 
