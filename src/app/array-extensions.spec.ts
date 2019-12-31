@@ -13,6 +13,48 @@ class SomeOtherClass {
 
 describe('Array Extensions tests for TsExtensions Linq esque library', () => {
 
+  it('can aggregate items to expected result using Aggregate on array of items of numbers', () => {
+    let someNums = [1, 2, 3, 4];
+    let result = someNums.Aggregate(0, 0, null);
+    expect(result).toBe(10);
+  });
+
+  it('can sum items to expected result using Sum on array of items of numbers', () => {
+    let someNums = [1, 2, 3, 4, 14];
+    let result = someNums.Aggregate(0, 0, null);
+    expect(result).toBe(24);
+  });
+
+  it('can sum items to expected result using SumSelect on array of items of numbers', () => {
+    let someArray: any[] = [];
+    someArray.push(<SomeClass>{ Name: "Foo", Num: 1 });
+    someArray.push(<SomeClass>{ Name: "FooBaz", Num: 4 });
+    someArray.push(<SomeClass>{ Name: "AllyoBaze", Num: 7 });
+    let result = someArray.SumSelect<SomeClass>("Num");
+    expect(result).toBe(12);
+  });
+
+  it('can count items to expected result using Count on array of items of numbers', () => {
+    let someNums = [1, 2, 3, 4];
+    let result = someNums.Count();
+    expect(result).toBe(4);
+  });
+
+  it('can count items by condition to expected using CountBy result on array of items of numbers', () => {
+    let someNums = [1, 2, 3, 4];
+    let result = someNums.CountBy<any>(x => x % 2 === 0);
+    expect(result).toBe(2);
+  });
+
+  it('can aggregate items and project to expected result using AggregateSeelct on array of items of objects', () => {
+    let someArray: any[] = [];
+    someArray.push(<SomeClass>{ Name: "Foo", Num: 1 });
+    someArray.push(<SomeClass>{ Name: "FooBaz", Num: 4 });
+    someArray.push(<SomeClass>{ Name: "AllyoBaze", Num: 7 });
+    let result = someArray.AggregateSelect<SomeClass>("Num", 0, 0, null);
+    expect(result).toBe(12);
+  });
+
   it('can take two items using Take(2)', () => {
     let starwarsMovies = StarWarsMovies;
     let firstTwoMovies = starwarsMovies.Take<Movie>(2).Select<Movie>("title").map(m => m.title);
@@ -137,8 +179,6 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
     console.log(sortedArrayNames);
     expect(sortedArrayNames).toEqual(["AllyoBaze", "Baze", "BelongToUs", "Foo"], "Expected that the sorting was performed using OrderBy and ThenBy on the input array.");
   });
-
-
 
 
 });

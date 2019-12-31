@@ -6,14 +6,19 @@ declare global {
     FirstOrDefault<T>(condition: predicate<T>): T;
     LastOrDefault<T>(condition: predicate<T>): T;
     Where<T>(condition: predicate<T>): T[];
+    Count<T>(): number;
+    CountBy<T>(condition: predicate<T>): number;
     Select<T>(...properties: (keyof T)[]): any[];
     GroupBy<T>(groupFunc: (arg: T) => string): any[];
     EnumerableRange(start: number, count: number): number[];
     Any<T>(condition: predicate<T>): boolean;
     All<T>(condition: predicate<T>): boolean;
     MaxSelect<T>(property: (keyof T)): any;
+    MinSelect<T>(property: (keyof T)): any;
     Max(): any;
     Min(): any;
+    Sum(): any;
+    SumSelect<T>(property: (keyof T)): any;
     Intersect<T>(otherArray: T[]): T[];
     IntersectSelect<T>(property: (keyof T), otherArray: T[]): T[];
     MinSelect<T>(property: (keyof T)): any;
@@ -29,6 +34,51 @@ declare global {
     defaultComparerSort<T>(x: T, y: T);
     ElementAt<T>(index: number);
     ElementAtOrDefault<T>(index: number);
+    Aggregate<T>(accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
+    AggregateSelect<T>(property: (keyof T), accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
+  }
+}
+
+if (!Array.prototype.CountBy) {
+  Array.prototype.CountBy = function <T>(condition: predicate<T>): number {
+    if (this === null || this === undefined)
+      return 0;
+    let result = 0;
+    this.forEach(el => {
+      if (condition(el)) {
+        result++;
+      }
+    });
+    return result;
+  }
+}
+
+if (!Array.prototype.Count) {
+  Array.prototype.Count = function <T>(): number {
+    return this !== null && this !== undefined ? this.length : 0;
+  }
+}
+
+if (!Array.prototype.Aggregate) {
+  Array.prototype.Aggregate = function <T>(accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any {
+    //debugger
+    if (reducerFunc === undefined || reducerFunc === null) {
+      reducerFunc = (accumulator, currentValue) => accumulator + currentValue;
+    }
+    let result = this.reduce(reducerFunc);
+    return result;
+  }
+}
+
+if (!Array.prototype.AggregateSelect) {
+  Array.prototype.AggregateSelect = function <T>(property: (keyof T), accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any {
+    //debugger
+    if (reducerFunc === undefined || reducerFunc === null) {
+      reducerFunc = (accumulator, currentValue) => accumulator + currentValue;
+    }
+    //debugger
+    let result = this.Select(property).map(n => n[property]).reduce(reducerFunc);
+    return result;
   }
 }
 
@@ -253,6 +303,26 @@ if (!Array.prototype.Min) {
       throw Error('Input array (this) must be actually an array!');
     }
     let result = this.sort(this.defaultComparerSort).FirstOrDefault(x => x);
+    return result;
+  }
+}
+
+if (!Array.prototype.Sum) {
+  Array.prototype.Sum = function <T>(): any {
+    if (!Array.isArray(this)) {
+      throw Error('Input array (this) must be actually an array!');
+    }
+    let result = this.Aggregate(0, 0, null);
+    return result;
+  }
+}
+
+if (!Array.prototype.SumSelect) {
+  Array.prototype.SumSelect = function <T>(property: (keyof T)): any {
+    if (!Array.isArray(this)) {
+      throw Error('Input array (this) must be actually an array!');
+    }
+    let result = this.Select(property).map(n => n[property]).Aggregate(0, 0, null);
     return result;
   }
 }
