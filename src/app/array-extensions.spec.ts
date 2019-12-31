@@ -11,6 +11,12 @@ class SomeOtherClass {
   SomeName: string;
 }
 
+class Student {
+  StudentID: number;
+  StudentName: string;
+  Age: number;
+}
+
 describe('Array Extensions tests for TsExtensions Linq esque library', () => {
 
   it('can aggregate items to expected result using Aggregate on array of items of numbers', () => {
@@ -40,19 +46,47 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
     expect(result).toBe(4);
   });
 
+  it('can average items to expected result using Average on array of items of numbers', () => {
+    let someArray: Student[] = [];
+    someArray.push(<Student>{ StudentID: 1, StudentName: "John", Age: 13 });
+    someArray.push(<Student>{ StudentID: 2, StudentName: "Moin", Age: 21 });
+    someArray.push(<Student>{ StudentID: 3, StudentName: "Bill", Age: 18 });
+    someArray.push(<Student>{ StudentID: 4, StudentName: "Ram", Age: 20 });
+    someArray.push(<Student>{ StudentID: 5, StudentName: "Ron", Age: 15 });
+    let result = someArray.AverageSelect<Student>("Age");
+    expect(result).toBe(17.4);
+  });
+
+  it('can average items to expected result using AverageSelect on array of items of numbers', () => {
+    let someNums = [1, 2, 3, 4, 5];
+    let result = someNums.Average();
+    expect(result).toBe(3);
+  });
+
   it('can count items by condition to expected using CountBy result on array of items of numbers', () => {
     let someNums = [1, 2, 3, 4];
     let result = someNums.CountBy<any>(x => x % 2 === 0);
     expect(result).toBe(2);
   });
 
-  it('can aggregate items and project to expected result using AggregateSeelct on array of items of objects', () => {
+  it('can aggregate items and project to expected result using AggregateSelect on array of items of objects', () => {
     let someArray: any[] = [];
     someArray.push(<SomeClass>{ Name: "Foo", Num: 1 });
     someArray.push(<SomeClass>{ Name: "FooBaz", Num: 4 });
     someArray.push(<SomeClass>{ Name: "AllyoBaze", Num: 7 });
     let result = someArray.AggregateSelect<SomeClass>("Num", 0, 0, null);
     expect(result).toBe(12);
+  });
+
+  it('can aggregate once more items and project to expected result using AggregateSelect on array of items of objects with accumulator value set initially', () => {
+    let someArray: Student[] = [];
+    someArray.push(<Student>{ StudentID: 1, StudentName: "John", Age: 13 });
+    someArray.push(<Student>{ StudentID: 2, StudentName: "Moin", Age: 21 });
+    someArray.push(<Student>{ StudentID: 3, StudentName: "Bill", Age: 18 });
+    someArray.push(<Student>{ StudentID: 4, StudentName: "Ram", Age: 20 });
+    someArray.push(<Student>{ StudentID: 5, StudentName: "Ron", Age: 15 });
+    let result = someArray.AggregateSelect<Student>("StudentName", "Student Names: ", 0, (a, b) => a + "," + b);
+    expect(result).toBe("John,Moin,Bill,Ram,Ron");
   });
 
   it('can take two items using Take(2)', () => {
@@ -74,7 +108,6 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
     let fiftMovie = starwarsMovies.Skip<Movie>(4).Take(1).Select<Movie>("title").map(m => m.title);
     expect(fiftMovie[0].toLowerCase()).toContain("empire strikes back");
     expect(fiftMovie.length).toBe(1);
-
   });
 
   it('can find desired items using OfType of type T', () => {

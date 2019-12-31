@@ -15,6 +15,8 @@ declare global {
     All<T>(condition: predicate<T>): boolean;
     MaxSelect<T>(property: (keyof T)): any;
     MinSelect<T>(property: (keyof T)): any;
+    Average<T>(): number;
+    AverageSelect<T>(property: (keyof T)): number;
     Max(): any;
     Min(): any;
     Sum(): any;
@@ -56,6 +58,33 @@ if (!Array.prototype.CountBy) {
 if (!Array.prototype.Count) {
   Array.prototype.Count = function <T>(): number {
     return this !== null && this !== undefined ? this.length : 0;
+  }
+}
+
+if (!Array.prototype.Average) {
+  Array.prototype.Average = function <T>(): number {
+    if (this === null || this === undefined || this.length === 0)
+      return null;
+    if (this.Any(x => typeof x !== "number")) {
+      throw Error('Can only calculate Average on arrays with only numeric items');
+    }
+    const reducerFunc = (accumulator, currentValue) => (accumulator + currentValue);
+    let result = this.reduce(reducerFunc) / this.length;
+    return result;
+  }
+}
+
+if (!Array.prototype.AverageSelect) {
+  Array.prototype.AverageSelect = function <T>(property: (keyof T)): number {
+    if (this === null || this === undefined || this.length === 0)
+      return null;
+    //debugger
+    if (this.Select(property).map(n => n[property]).Any(x => typeof x !== "number")) {
+      throw Error('Can only calculate Average on arrays with only numeric items');
+    }
+    const reducerFunc = (accumulator, currentValue) => (accumulator + currentValue);
+    let result = this.Select(property).map(n => n[property]).reduce(reducerFunc) / this.length;
+    return result;
   }
 }
 
