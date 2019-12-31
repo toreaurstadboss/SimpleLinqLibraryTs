@@ -11,14 +11,17 @@ declare global {
     EnumerableRange(start: number, count: number): number[];
     Any<T>(condition: predicate<T>): boolean;
     All<T>(condition: predicate<T>): boolean;
-    MaxSelect<T>(property: (keyof T)): number;
-    Max(): number;
+    MaxSelect<T>(property: (keyof T)): any;
+    Max(): any;
+    Min(): any;
+    MinSelect<T>(property: (keyof T)): any;
     OrderBy<T>(sortMember: sortingValue<T>): T[];
     ThenBy<T>(sortMember: sortingValue<T>): T[];
     OfType<T>(compareObject: T): T[];
     SequenceEqual<T>(compareArray: T): boolean;
     Take<T>(count: number): T[];
     Skip<T>(count: number): T[];
+    defaultComparerSort<T>(x: T, y: T);
   }
 }
 
@@ -111,31 +114,44 @@ if (!Array.prototype.ThenBy) {
 }
 
 if (!Array.prototype.MaxSelect) {
-  Array.prototype.MaxSelect = function <T>(property: (keyof T)): number {
-    let result: number = Number.MIN_VALUE;
-    this.forEach(element => {
-      let elementValue = element[property];
-      if (typeof elementValue !== 'number')
-        throw Error('The provided property is not of type number! ' + property);
-      if (result < element[property])
-        result = element[property];
-    });
+  Array.prototype.MaxSelect = function <T>(property: (keyof T)): any {
+    let result = this.Select(property).map(n => n[property]).sort(this.defaultComparerSort).LastOrDefault(x => x);
     return result;
   }
 }
 
 if (!Array.prototype.Max) {
-  Array.prototype.Max = function (): number {
-    let result: number = Number.MIN_VALUE;
-    this.forEach(element => {
-      if (typeof element !== 'number')
-        throw Error('The provided array contains element that is not of type number! ');
-      if (result < element)
-        result = element;
-    });
+  Array.prototype.Max = function <T>(): any {
+    if (!Array.isArray(this)) {
+      throw Error('Input array (this) must be actually an array!');
+    }
+    let result = this.sort(this.defaultComparerSort).LastOrDefault(x => x);
     return result;
   }
 }
+
+if (!Array.prototype.MinSelect) {
+  Array.prototype.MinSelect = function <T>(property: (keyof T)): any {
+    let result = this.Select(property).map(n => n[property]).sort(this.defaultComparerSort).FirstOrDefault(x => x);
+    return result;
+  }
+}
+
+if (!Array.prototype.Min) {
+  Array.prototype.Min = function <T>(): any {
+    if (!Array.isArray(this)) {
+      throw Error('Input array (this) must be actually an array!');
+    }
+    let result = this.sort(this.defaultComparerSort).FirstOrDefault(x => x);
+    return result;
+  }
+}
+
+
+
+
+
+
 
 if (!Array.prototype.FirstOrDefault) {
   Array.prototype.FirstOrDefault = function <T>(condition: predicate<T>): T {
@@ -249,6 +265,55 @@ if (!Array.prototype.Where) {
     return matchingItems;
   }
 }
+
+
+const toStringItem = obj => {
+  //ECMA specification: http://www.ecma-international.org/ecma-262/6.0/#sec-tostring
+
+  if (obj === null)
+    return "null";
+
+  if (typeof obj === "boolean" || typeof obj === "number")
+    return obj;
+
+  if (typeof obj === "string")
+    return obj;
+
+  if (typeof obj === "symbol")
+    throw new TypeError();
+
+  //we know we have an object. perhaps return JSON.stringify?
+  return (obj).toString(); //JSON.stringify(obj) ?
+};
+
+if (!Array.prototype.defaultComparerSort) {
+  Array.prototype.defaultComparerSort = function <T>(x: T, y: T) {
+    //INFO: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
+    //ECMA specification: http://www.ecma-international.org/ecma-262/6.0/#sec-sortcompare
+
+    if (x === undefined && y === undefined)
+      return 0;
+
+    if (x === undefined)
+      return 1;
+
+    if (y === undefined)
+      return -1;
+
+    const xString = toStringItem(x);
+    const yString = toStringItem(y);
+
+    if (xString < yString)
+      return -1;
+
+    if (xString > yString)
+      return 1;
+
+    return 0;
+  }
+
+}
+
 
 
 

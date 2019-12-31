@@ -16,7 +16,7 @@ export class AppComponent {
   allMoviesWithLeia: Movie[];
   starwarsMovies: string;
   allTitlesAndEpisodeNumbers: any[];
-  groupedByMoviesWithLando: any[];
+  groupedMoviesWithJarJarBinks: any[];
 
   movieStarringJarJarBinks: boolean;
 
@@ -35,11 +35,11 @@ export class AppComponent {
     console.log(this.firstMovieWithBoba);
     console.log(this.allMoviesWithLeia);
     this.allTitlesAndEpisodeNumbers = StarWarsMovies.Select<Movie>("title", "episode_number");
-    this.groupedByMoviesWithLando = StarWarsMovies.GroupBy<Movie>(movie =>
+    this.groupedMoviesWithJarJarBinks = StarWarsMovies.GroupBy<Movie>(movie =>
       movie.main_characters.indexOf('Jar Jar Binks') >= 0 ? "Movie starring JarJar" : "Movie not starring JarJar");
 
     console.log(this.allTitlesAndEpisodeNumbers);
-    console.log(this.groupedByMoviesWithLando);
+    console.log(this.groupedMoviesWithJarJarBinks);
 
     console.log('Generating some numbers in an enumerable range');
     for (let num in [].EnumerableRange(1, 10)) {

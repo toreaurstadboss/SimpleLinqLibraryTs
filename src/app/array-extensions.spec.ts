@@ -50,6 +50,29 @@ describe('Array Extensions tests', () => {
     expect(filteredArrayBySpecifiedType.All(item => <SomeClass>item !== undefined)).toBe(true, "Expected only items of type SomeOtherClass in the filtered array after running OfType of SomeOtherClass on it.");
   });
 
+  it('can find maximum of arrays using Max,', () => {
+    let inputArray = [1, 2, 3, 4, 5, 6, 7, 15, 4];
+    expect(inputArray.Max()).toBe(15);
+    let inputArrayOfChars = ['a', 'b', 'c', 'd', 'A', 'B', 'C'];
+    expect(inputArrayOfChars.Max()).toBe('d');
+  });
+
+  it('can find maximum of arrays using MaxSelect,', () => {
+    expect(StarWarsMovies.MaxSelect<Movie>("episode_number")).toBe("6");
+  });
+
+  it('can find minimum of arrays using MinSelect,', () => {
+    expect(StarWarsMovies.MinSelect<Movie>("episode_number")).toBe("1");
+  });
+
+  it('can find maximum of arrays using Min,', () => {
+    let inputArray = [1, 2, 3, 4, 5, 6, 7, 15, 4];
+    expect(inputArray.Min()).toBe(1);
+    let inputArrayOfChars = ['a', 'b', 'c', 'd', 'A', 'B', 'C'];
+    expect(inputArrayOfChars.Min()).toBe('A');
+  });
+
+
   it('can sort using OrderBy', () => {
     let inputArray: SomeClass[] = [
       { Num: 1, Name: "Foo" },
