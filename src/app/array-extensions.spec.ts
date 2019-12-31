@@ -106,10 +106,21 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
       { Num: 5, Name: "AllyoBaze" }
     ];
     let sortedArray = inputArray.OrderBy<SomeClass>(s => s.Num);
-    console.log(sortedArray);
 
     let sortedArrayNums = sortedArray.Select<SomeClass>("Num").map(s => s.Num);
     expect(sortedArrayNums).toEqual([-3, 1, 5, 11], "Expected that the sorting was performed on the input array.");
+  });
+
+  it('can sort using OrderByDescending', () => {
+    let inputArray: SomeClass[] = [
+      { Num: 1, Name: "Foo" },
+      { Num: -3, Name: "Baze" },
+      { Num: 11, Name: "BelongToUs" },
+      { Num: 5, Name: "AllyoBaze" }
+    ];
+    let sortedArray = inputArray.OrderByDescending<SomeClass>(s => s.Num);
+    let sortedArrayNums = sortedArray.Select<SomeClass>("Num").map(s => s.Num);
+    expect(sortedArrayNums).toEqual([11, 5, 1, -3], "Expected that the sorting was performed on the input array.");
   });
 
   it('can sort using OrderBy and ThenBy', () => {

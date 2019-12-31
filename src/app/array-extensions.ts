@@ -18,6 +18,7 @@ declare global {
     IntersectSelect<T>(property: (keyof T), otherArray: T[]): T[];
     MinSelect<T>(property: (keyof T)): any;
     OrderBy<T>(sortMember: sortingValue<T>): T[];
+    OrderByDescending<T>(sortMember: sortingValue<T>): T[];
     ThenBy<T>(sortMember: sortingValue<T>): T[];
     OfType<T>(compareObject: T): T[];
     SequenceEqual<T>(compareArray: T): boolean;
@@ -168,7 +169,20 @@ if (!Array.prototype.OrderBy) {
     let result = this.sort(function (a, b) {
       let aValue = sortMember(a);
       let bValue = sortMember(b);
-      return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+      let sortValue = Array.prototype.defaultComparerSort(aValue, bValue);
+      return sortValue;
+    });
+    return result;
+  }
+}
+
+if (!Array.prototype.OrderByDescending) {
+  Array.prototype.OrderByDescending = function <T>(sortMember: sortingValue<T>): T[] {
+    let result = this.sort(function (a, b) {
+      let aValue = sortMember(a);
+      let bValue = sortMember(b);
+      let sortValue = -1 * Array.prototype.defaultComparerSort(aValue, bValue);
+      return sortValue;
     });
     return result;
   }
@@ -242,12 +256,6 @@ if (!Array.prototype.Min) {
     return result;
   }
 }
-
-
-
-
-
-
 
 if (!Array.prototype.FirstOrDefault) {
   Array.prototype.FirstOrDefault = function <T>(condition: predicate<T>): T {
