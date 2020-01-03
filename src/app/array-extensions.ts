@@ -4,6 +4,9 @@ declare global {
   type sortingValue<T> = (arg: T) => any;
   interface Array<T> {
     FirstOrDefault<T>(condition: predicate<T>): T;
+    SingleOrDefault<T>(condition: predicate<T>): T;
+    First<T>(condition: predicate<T>): T;
+    Single<T>(condition: predicate<T>): T;
     LastOrDefault<T>(condition: predicate<T>): T;
     Where<T>(condition: predicate<T>): T[];
     Count<T>(): number;
@@ -20,7 +23,10 @@ declare global {
     Max(): any;
     Min(): any;
     Sum(): any;
+    Reverse<T>(): T[];
+    Empty<T>(): T[];
     Except<T>(otherArray: T[]): T[];
+    Intersect<T>(otherArray: T[]): T[];
     Union<T>(otherArray: T[]): T[];
     Concat<T>(otherArray: T[]): T[];
     Distinct<T>(): T[];
@@ -43,6 +49,35 @@ declare global {
     ElementAtOrDefault<T>(index: number);
     Aggregate<T>(accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
     AggregateSelect<T>(property: (keyof T), accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
+  }
+}
+
+if (!Array.prototype.Empty) {
+  Array.prototype.Empty = function <T>(): T[] {
+    if (this === undefined || this === null) {
+      return [];
+    }
+    return this;
+  }
+}
+
+if (!Array.prototype.Intersect) {
+  Array.prototype.Intersect = function <T>(otherArray: T[]): T[] {
+    if (this === undefined || this === null) {
+      return [];
+    }
+    let result = this.Where(item => otherArray.Any(x => defaultCompare(x, item)));
+    return result;
+  }
+}
+
+if (!Array.prototype.Reverse) {
+  Array.prototype.Reverse = function <T>(): T[] {
+    if (this === null || this === undefined) {
+      return [];
+    }
+    let result = this.reverse();
+    return result;
   }
 }
 
@@ -423,6 +458,51 @@ if (!Array.prototype.FirstOrDefault) {
       if (condition(item))
         return item;
     });
+    return matchingItems.length > 0 ? matchingItems[0] : null;
+  }
+}
+
+if (!Array.prototype.First) {
+  Array.prototype.First = function <T>(condition: predicate<T>): T {
+    let matchingItems: T[] = this.filter((item: T) => {
+      if (condition(item))
+        return item;
+    });
+    if (matchingItems === null || matchingItems === undefined || matchingItems.length === 0) {
+      throw Error('Invalid operation. No items found.');
+    }
+    return matchingItems[0];
+  }
+}
+
+if (!Array.prototype.Single) {
+  Array.prototype.Single = function <T>(condition: predicate<T>): T {
+    let matchingItems: T[] = this.filter((item: T) => {
+      if (condition(item))
+        return item;
+    });
+    if (matchingItems === null || matchingItems === undefined || matchingItems.length === 0) {
+      throw Error('Invalid operation. No items found.');
+    }
+    if (matchingItems.length > 1) {
+      throw Error('Invalid operation. More than one items found.');
+    }
+    return matchingItems[0];
+  }
+}
+
+if (!Array.prototype.SingleOrDefault) {
+  Array.prototype.SingleOrDefault = function <T>(condition: predicate<T>): T {
+    let matchingItems: T[] = this.filter((item: T) => {
+      if (condition(item))
+        return item;
+    });
+    if (matchingItems === null || matchingItems === undefined) {
+      throw Error('Invalid operation. Got null or undefined.');
+    }
+    if (matchingItems.length > 1) {
+      throw Error('Invalid operation. More than one items found.');
+    }
     return matchingItems.length > 0 ? matchingItems[0] : null;
   }
 }

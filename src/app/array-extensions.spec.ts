@@ -19,6 +19,42 @@ class Student {
 
 describe('Array Extensions tests for TsExtensions Linq esque library', () => {
 
+  it('can return the first or default result using FirstOrDefault on a given array', () => {
+    let firstMovieStarringJarJar = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);
+    expect(firstMovieStarringJarJar !== null).toBe(true);
+    let firstMovieStarringBruceWillis = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Bruce Willis') > 0);
+    expect(firstMovieStarringBruceWillis === null).toBe(true);
+  });
+
+  it('can return the first or default result using First on a given array', () => {
+    let firstMovieStarringJarJar = StarWarsMovies.First<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);
+    expect(firstMovieStarringJarJar !== null).toBe(true);
+    expect(() => StarWarsMovies.First<Movie>(m => m.main_characters.indexOf('Bruce Willis') > 0)).toThrow(new Error("Invalid operation. No items found."));
+  });
+
+  it('can return the first or default result using SingleOrDefault on a given array', () => {
+    let firstMovieStarringJarJar = StarWarsMovies.SingleOrDefault<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);
+    expect(firstMovieStarringJarJar !== null).toBe(true);
+    expect(() => StarWarsMovies.SingleOrDefault<Movie>(m => m.main_characters.indexOf('Han Solo') > 0)).toThrow(new Error("Invalid operation. More than one items found."));
+  });
+
+  it('can return the first or default result using Single on a given array', () => {
+    let firstMovieStarringJarJar = StarWarsMovies.Single<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);
+    expect(firstMovieStarringJarJar !== null).toBe(true);
+    expect(() => StarWarsMovies.Single<Movie>(m => m.main_characters.indexOf('Han Solo') > 0)).toThrow(new Error("Invalid operation. More than one items found."));
+  });
+
+  it('can run reverse and return the reversed array', () => {
+    let firstArray = ["One", "Two", "Three", "Four", "Five"];
+    let result = firstArray.Reverse();
+    expect(result).toEqual(["Five", "Four", "Three", "Two", "One"]);
+  });
+
+  it('can return a trivial empty array using Empty operator', () => {
+    let emptyArray = Array.prototype.Empty();
+    expect(emptyArray.length).toEqual(0);
+  });
+
   it('can concatenate two arrays and return all items from both arrays into one array concatenated', () => {
     let firstArray = ["One", "Two", "Three", "Four", "Five"];
     let secondArray = ["Four", "Five", "Six", "Seven", "Eight"];
@@ -31,6 +67,13 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
     let secondArray = ["Four", "Five", "Six", "Seven", "Eight"];
     let result = firstArray.Union(secondArray);
     expect(result).toEqual(["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight"]);
+  });
+
+  it('can run Intersect to find items in both arrays', () => {
+    let firstArray = ["One", "Two", "Three", "Four", "Five"];
+    let secondArray = ["Four", "Five", "Six", "Seven", "Eight"];
+    let result = firstArray.Intersect(secondArray);
+    expect(result).toEqual(["Four", "Five"]);
   });
 
   it('can run Except to filter out items from the other array present also in the first array', () => {
