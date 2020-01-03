@@ -21,9 +21,41 @@ class Hero {
   name: string;
   gender: string;
   age: number;
+  constructor(name: string = "", gender: string = "", age: number = 0) {
+    this.name = name;
+    this.gender = gender;
+    this.age = age;
+  }
+}
+
+class HeroWithAbility extends Hero {
+  ability: string;
+  constructor(ability: string = "") {
+    super();
+    this.ability = ability;
+  }
 }
 
 describe('Array Extensions tests for TsExtensions Linq esque library', () => {
+
+  it('can retrieve props for a class items of an array', () => {
+    let heroes: Hero[] = [<Hero>{ name: "Han Solo", age: 44, gender: "M" }, <Hero>{ name: "Leia", age: 29, gender: "F" }, <Hero>{ name: "Luke", age: 24, gender: "M" }, <Hero>{ name: "Lando", age: 47, gender: "M" }];
+    let foundProps = heroes.GetProperties(Hero, false);
+    //debugger
+    let expectedArrayOfProps = ["name", "age", "gender"];
+    expect(foundProps).toEqual(expectedArrayOfProps);
+    expect(heroes.GetProperties(Hero, true)).toEqual(["age", "gender", "name"]);
+  });
+
+  it('can retrieve props for a class only knowing its function', () => {
+    let heroes: Hero[] = [];
+    let foundProps = heroes.GetProperties(Hero, false);
+    let expectedArrayOfProps = ["this.name", "this.gender", "this.age"];
+    expect(foundProps).toEqual(expectedArrayOfProps);
+    let foundPropsThroughClassFunction = heroes.GetProperties(Hero, true);
+    //debugger
+    expect(foundPropsThroughClassFunction.SequenceEqual(["this.age", "this.gender", "this.name"])).toBe(true);
+  });
 
   it('can apply method ToDictionary on an array, allowing specificaton of a key selector for the dictionary object', () => {
     let heroes = [{ name: "Han Solo", age: 44, gender: "M" }, { name: "Leia", age: 29, gender: "F" }, { name: "Luke", age: 24, gender: "M" }, { name: "Lando", age: 47, gender: "M" }];
@@ -43,6 +75,13 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
         { name: "Lando", age: 47, gender: "M" }
     };
     expect(dictionaryOfHeroes).toEqual(expectedDictionary);
+  });
+
+  it('can apply method Cast on an array, casting items to other type', () => {
+    let heroes = [{ name: "Han Solo", age: 44, gender: "M" }, { name: "Leia", age: 29, gender: "F" }, { name: "Luke", age: 24, gender: "M" }, { name: "Lando", age: 47, gender: "M" }];
+    let castedArray = heroes.Cast<HeroWithAbility>(HeroWithAbility);
+    let expectedArrayString = "[{\"name\":\"Han Solo\",\"age\":44,\"gender\":\"M\",\"ability\":null},{\"name\":\"Leia\",\"age\":29,\"gender\":\"F\",\"ability\":null},{\"name\":\"Luke\",\"age\":24,\"gender\":\"M\",\"ability\":null},{\"name\":\"Lando\",\"age\":47,\"gender\":\"M\",\"ability\":null}]";
+    expect(JSON.stringify(castedArray)).toBe(expectedArrayString);
   });
 
   it('can decide if a compound array of objects contains our target item', () => {

@@ -29,6 +29,9 @@ declare global {
     Except<T>(otherArray: T[]): T[];
     Intersect<T>(otherArray: T[]): T[];
     Union<T>(otherArray: T[]): T[];
+    Cast<TOtherType>(TOtherType: Function): TOtherType[];
+    TryCast<TOtherType>(TOtherType: Function): TOtherType[];
+    GetProperties<T>(TClass: Function, sortProps: boolean): string[];
     Concat<T>(otherArray: T[]): T[];
     Distinct<T>(): T[];
     DistinctBy<T>(property: (keyof T)): any;
@@ -51,6 +54,75 @@ declare global {
     ElementAtOrDefault<T>(index: number);
     Aggregate<T>(accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
     AggregateSelect<T>(property: (keyof T), accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
+  }
+}
+
+if (!Array.prototype.GetProperties) {
+  Array.prototype.GetProperties = function <T>(TClass: any = null, sortProps: boolean = false): string[] {
+    if (TClass === null || TClass === undefined) {
+      if (this === null || this === undefined || this.length === 0) {
+        return []; //not possible to find out more information - return empty array
+      }
+    }
+    // debugger
+    if (TClass !== null && TClass !== undefined) {
+      if (this !== null && this !== undefined) {
+        if (this.length > 0) {
+          let knownProps: string[] = Describer.describe(this[0]).Where(x => x !== null && x !== undefined);
+          if (sortProps && knownProps !== null && knownProps !== undefined) {
+            knownProps = knownProps.OrderBy(p => p);
+          }
+          return knownProps;
+        }
+        if (TClass !== null && TClass !== undefined) {
+          let knownProps: string[] = Describer.describe(TClass).Where(x => x !== null && x !== undefined);
+          if (sortProps && knownProps !== null && knownProps !== undefined) {
+            knownProps = knownProps.OrderBy(p => p);
+          }
+          return knownProps;
+        }
+      }
+    }
+    return []; //give up..
+  }
+}
+
+if (!Array.prototype.Cast) {
+  Array.prototype.Cast = function <TOtherType>(TOtherType: Function): TOtherType[] {
+    if (this === null || this === undefined) {
+      return [];
+    }
+    let result = [];
+    this.forEach(el => {
+      let elementCasted = <TOtherType>el;
+      //debugger
+      let desc = Describer.describe(TOtherType, true);
+      ObjectInitializer.initialize(desc, elementCasted);
+      result.push(elementCasted);
+    });
+    return result;
+  }
+}
+
+if (!Array.prototype.TryCast) {
+  Array.prototype.TryCast = function <TOtherType>(TOtherType: Function): TOtherType[] {
+    if (this === null || this === undefined) {
+      return [];
+    }
+    let result = [];
+    this.forEach(el => {
+      try {
+        let elementCasted = <TOtherType>el;
+        //debugger
+        let desc = Describer.describe(TOtherType, true);
+        ObjectInitializer.initialize(desc, elementCasted);
+        result.push(elementCasted);
+      }
+      catch (Error) {
+        //swallow
+      }
+    });
+    return result;
   }
 }
 
@@ -635,7 +707,6 @@ if (!Array.prototype.Where) {
   }
 }
 
-
 const toStringItem = obj => {
   //ECMA specification: http://www.ecma-international.org/ecma-262/6.0/#sec-tostring
 
@@ -685,6 +756,47 @@ if (!Array.prototype.defaultComparerSort) {
       return 1;
 
     return 0;
+  }
+
+}
+
+class Describer {
+  private static FRegEx = new RegExp(/(?:this\.)(.+?(?= ))/g);
+  static describe(val: any, parent = false): string[] {
+    let isFunction = Object.prototype.toString.call(val) == '[object Function]';
+    if (isFunction) {
+      let result = [];
+      if (parent) {
+        var proto = Object.getPrototypeOf(val.prototype);
+        if (proto) {
+          result = result.concat(this.describe(proto.constructor, parent));
+        }
+      }
+      result = result.concat(val.toString().match(this.FRegEx));
+      result = result.Where(r => r !== null && r !== undefined);
+      return result;
+    }
+    else {
+      if (typeof val == "object") {
+        let knownProps: string[] = Object.getOwnPropertyNames(val);
+        return knownProps;
+      }
+    }
+    return val !== null ? [val.tostring()] : [];
+  }
+}
+
+class ObjectInitializer {
+
+  static initialize(properties: string[], inputObject: any): void {
+    properties.forEach(prop => {
+      let adjustedProp = prop.replace("this.", "");
+      if (inputObject[adjustedProp] === undefined) {
+        //the property is missing
+        inputObject[adjustedProp] = null;
+      }
+    });
+
   }
 
 }
