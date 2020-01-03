@@ -19,6 +19,27 @@ class Student {
 
 describe('Array Extensions tests for TsExtensions Linq esque library', () => {
 
+  it('can concatenate two arrays and return all items from both arrays into one array concatenated', () => {
+    let firstArray = ["One", "Two", "Three", "Four", "Five"];
+    let secondArray = ["Four", "Five", "Six", "Seven", "Eight"];
+    let result = firstArray.Concat(secondArray);
+    expect(result).toEqual(["One", "Two", "Three", "Four", "Five", "Four", "Five", "Six", "Seven", "Eight"]);
+  });
+
+  it('can return a union of two arrays into one array with distinct items of these two', () => {
+    let firstArray = ["One", "Two", "Three", "Four", "Five"];
+    let secondArray = ["Four", "Five", "Six", "Seven", "Eight"];
+    let result = firstArray.Union(secondArray);
+    expect(result).toEqual(["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight"]);
+  });
+
+  it('can run Except to filter out items from the other array present also in the first array', () => {
+    let firstArray = ["One", "Two", "Three", "Four", "Five"];
+    let secondArray = ["Four", "Five", "Six", "Seven", "Eight"];
+    let result = firstArray.Except(secondArray);
+    expect(result).toEqual(["One", "Two", "Three"]);
+  });
+
   it('can aggregate items to expected result using Aggregate on array of items of numbers', () => {
     let someNums = [1, 2, 3, 4];
     let result = someNums.Aggregate(0, 0, null);

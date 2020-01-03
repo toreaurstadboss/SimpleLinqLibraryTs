@@ -20,6 +20,9 @@ declare global {
     Max(): any;
     Min(): any;
     Sum(): any;
+    Except<T>(otherArray: T[]): T[];
+    Union<T>(otherArray: T[]): T[];
+    Concat<T>(otherArray: T[]): T[];
     Distinct<T>(): T[];
     DistinctBy<T>(property: (keyof T)): any;
     SumSelect<T>(property: (keyof T)): any;
@@ -40,6 +43,37 @@ declare global {
     ElementAtOrDefault<T>(index: number);
     Aggregate<T>(accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
     AggregateSelect<T>(property: (keyof T), accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
+  }
+}
+
+if (!Array.prototype.Except) {
+  Array.prototype.Except = function <T>(otherArray: T[]): T[] {
+    if (this === null || this === undefined || otherArray === null || otherArray === undefined) {
+      return [];
+    }
+    let result = this.Where(item => !otherArray.Any(x => defaultCompare(x, item)));
+    return result;
+  }
+}
+
+if (!Array.prototype.Union) {
+  Array.prototype.Union = function <T>(otherArray: T[]): T[] {
+    if (this === null || this === undefined || otherArray === null || otherArray === undefined) {
+      return [];
+    }
+    let result = this.Concat(otherArray);
+    result = result.Distinct();
+    return result;
+  }
+}
+
+if (!Array.prototype.Concat) {
+  Array.prototype.Concat = function <T>(otherArray: T[]): T[] {
+    if (this === null || this === undefined || otherArray === null || otherArray === undefined) {
+      return [];
+    }
+    let result = this.concat(otherArray);
+    return result;
   }
 }
 
@@ -515,6 +549,12 @@ const toStringItem = obj => {
   //we know we have an object. perhaps return JSON.stringify?
   return (obj).toString(); //JSON.stringify(obj) ?
 };
+
+const defaultCompare = function <T>(x: T, y: T) {
+  let resultCompare = [].defaultComparerSort(x, y);
+  return resultCompare === 0 ? true : false;
+}
+
 
 if (!Array.prototype.defaultComparerSort) {
   Array.prototype.defaultComparerSort = function <T>(x: T, y: T) {
