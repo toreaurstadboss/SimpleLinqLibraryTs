@@ -17,7 +17,42 @@ class Student {
   Age: number;
 }
 
+class Hero {
+  name: string;
+  gender: string;
+  age: number;
+}
+
 describe('Array Extensions tests for TsExtensions Linq esque library', () => {
+
+  it('can apply method ToDictionary on an array, allowing specificaton of a key selector for the dictionary object', () => {
+    let heroes = [{ name: "Han Solo", age: 44, gender: "M" }, { name: "Leia", age: 29, gender: "F" }, { name: "Luke", age: 24, gender: "M" }, { name: "Lando", age: 47, gender: "M" }];
+    let dictionaryOfHeroes = heroes.ToDictionary<Hero>(x => x.name);
+
+    let expectedDictionary = {
+      "Han Solo": {
+        name: "Han Solo", age: 44, gender: "M"
+      },
+      "Leia": {
+        name: "Leia", age: 29, gender: "F"
+      },
+      "Luke": {
+        name: "Luke", age: 24, gender: "M"
+      },
+      "Lando":
+        { name: "Lando", age: 47, gender: "M" }
+    };
+    expect(dictionaryOfHeroes).toEqual(expectedDictionary);
+  });
+
+  it('can decide if a compound array of objects contains our target item', () => {
+    let firstMovieStarringJarJar = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);
+    let foundJarJar = StarWarsMovies.Contains(firstMovieStarringJarJar);
+    expect(foundJarJar).toBe(true);
+    let somenums = [1, 3, 4, 5];
+    expect(somenums.Contains(4)).toBe(true);
+    expect(somenums.Contains(33)).toBe(false);
+  });
 
   it('can return the first or default result using FirstOrDefault on a given array', () => {
     let firstMovieStarringJarJar = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);

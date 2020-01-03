@@ -15,6 +15,7 @@ declare global {
     GroupBy<T>(groupFunc: (arg: T) => string): any[];
     EnumerableRange(start: number, count: number): number[];
     Any<T>(condition: predicate<T>): boolean;
+    Contains<T>(item: T): boolean;
     All<T>(condition: predicate<T>): boolean;
     MaxSelect<T>(property: (keyof T)): any;
     MinSelect<T>(property: (keyof T)): any;
@@ -41,6 +42,7 @@ declare global {
     OfType<T>(compareObject: T): T[];
     SequenceEqual<T>(compareArray: T): boolean;
     Take<T>(count: number): T[];
+    ToDictionary<T>(keySelector: (arg: T) => string): any;
     TakeWhile<T>(condition: predicate<T>): T[];
     SkipWhile<T>(condition: predicate<T>): T[];
     Skip<T>(count: number): T[];
@@ -523,6 +525,22 @@ if (!Array.prototype.Any) {
   }
 }
 
+if (!Array.prototype.Contains) {
+  Array.prototype.Contains = function <T>(item: T): boolean {
+    if (this.length === 0)
+      return false;
+    let result: boolean = false;
+    for (let index = 0; index < this.length; index++) {
+      const element = this[index];
+      if (defaultCompare(item, element)) {
+        result = true;
+        break;
+      }
+    }
+    return result;
+  }
+}
+
 if (!Array.prototype.All) {
   Array.prototype.All = function <T>(condition: predicate<T>): boolean {
     if (this.length === 0)
@@ -583,6 +601,13 @@ if (!Array.prototype.GroupBy) {
   }
 }
 
+if (!Array.prototype.ToDictionary) {
+  Array.prototype.ToDictionary = function <T>(keySelector: (arg: T) => string): any[] {
+    let result = this.reduce((r, o) => Object.assign(r, { [keySelector(o)]: o }), {});
+    return result;
+  }
+}
+
 function* Range(start, count) {
   for (let x = start; x < start + count; x++) {
     yield x;
@@ -627,14 +652,14 @@ const toStringItem = obj => {
     throw new TypeError();
 
   //we know we have an object. perhaps return JSON.stringify?
-  return (obj).toString(); //JSON.stringify(obj) ?
+  //return (obj).toString(); //JSON.stringify(obj) ?
+  return JSON.stringify(obj);
 };
 
 const defaultCompare = function <T>(x: T, y: T) {
   let resultCompare = [].defaultComparerSort(x, y);
   return resultCompare === 0 ? true : false;
 }
-
 
 if (!Array.prototype.defaultComparerSort) {
   Array.prototype.defaultComparerSort = function <T>(x: T, y: T) {
