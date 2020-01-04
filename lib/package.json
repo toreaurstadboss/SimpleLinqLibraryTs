@@ -1,11 +1,12 @@
 {
   "name": "simpletslinq",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "A simple library that offers much of Linq functionality on Arrays in Js, written in Typescript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "private": false,
   "scripts": {
+    "serve": "ng serve --configuration es5",
     "test": "ng test",
     "prepublish": "tsc",
     "build": "tsc"
@@ -46,5 +47,9 @@
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
     "typescript": "~3.5.3"
+  },
+  "dependencies": {
+    "classlist.js": "^1.1.20150312",
+    "web-animations-js": "^2.3.2"
   }
 }

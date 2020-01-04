@@ -73,10 +73,10 @@
   StarWarsMovies.GroupBy&lt;Movie&gt;(movie =>
     return movie.main_characters.indexOf('Jar Jar Binks') >= 0 ? "Movie starring Jar Jar Binks" : "Movie not starring Jar Jar Binks");
 
-  Match count: {{groupedByMoviesWithLando.length}}
+  Match count: {{groupedMoviesWithJarJarBinks.length}}
 </pre><br /><br />
 <div class="well">
-  {{groupedByMoviesWithLando | json}}
+  {{groupedMoviesWithJarJarBinks | json}}
 </div>
 
 <h3>EnumerableRange demo - Generate numbers 1 to 10 using EnumerableRange.</h3>

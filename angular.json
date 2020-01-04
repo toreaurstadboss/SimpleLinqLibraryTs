@@ -29,6 +29,9 @@
             "scripts": []
           },
           "configurations": {
+            "es5": {
+              "tsConfig": "./tsconfig-es5.app.json"
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -66,6 +69,9 @@
             "browserTarget": "TsExtensions:build"
           },
           "configurations": {
+            "es5": {
+              "browserTarget": "TsExtensions:build:es5"
+            },
             "production": {
               "browserTarget": "TsExtensions:build:production"
             }
@@ -120,6 +126,7 @@
           }
         }
       }
-    }},
+    }
+  },
   "defaultProject": "TsExtensions"
 }

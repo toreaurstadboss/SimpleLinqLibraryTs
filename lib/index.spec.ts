@@ -11,10 +11,28 @@ class SomeOtherClass {
   SomeName: string;
 }
 
+
 class Student {
   StudentID: number;
   StudentName: string;
   Age: number;
+  StandardID: number;
+  constructor(StudentID = 0, StandardName = "", Age = 0, StandardID = 0) {
+    this.StudentID = StudentID;
+    this.StudentName = StandardName;
+    this.Age = Age;
+    this.StandardID = StandardID;
+  }
+}
+
+class Standard extends Student {
+  StandardID: number;
+  StandardName: string;
+  constructor(StandardID = 0, StandardName = "") {
+    super();
+    this.StandardID = StandardID;
+    this.StandardName = StandardName;
+  }
 }
 
 class Hero {
@@ -37,6 +55,42 @@ class HeroWithAbility extends Hero {
 }
 
 describe('Array Extensions tests for TsExtensions Linq esque library', () => {
+
+  it('can join items of two array of objects using Join operator', () => {
+    let studentList = [
+      <Student>{ StudentID: 1, StudentName: "John", StandardID: 1 },
+      <Student>{ StudentID: 1, StudentName: "Moin", StandardID: 1 },
+      <Student>{ StudentID: 1, StudentName: "Bill", StandardID: 2 },
+      <Student>{ StudentID: 1, StudentName: "Ram", StandardID: 2 },
+      <Student>{ StudentID: 1, StudentName: "Ron" }];
+
+    let standardList = [
+      <Standard>{ StandardID: 1, StandardName: "Standard 1" },
+      <Standard>{ StandardID: 2, StandardName: "Standard 2" },
+      <Standard>{ StandardID: 3, StandardName: "Standard 3" }
+    ];
+
+    let innerJoin = studentList.Join<Student, Standard>(
+      standardList, student => student.StandardID,
+      standard => standard.StandardID,
+      (student, standard) => ({ StudentName: student.StudentName, StandardName: standard.StandardName }));
+
+    let expectedResult = [
+      { StudentName: "John", StandardName: "Standard 1" },
+      { StudentName: "Moin", StandardName: "Standard 1" },
+      { StudentName: "Bill", StandardName: "Standard 2" },
+      { StudentName: "Ram", StandardName: "Standard 2" }
+    ];
+    expect(innerJoin).toEqual(expectedResult);
+
+  });
+
+  it('can join two numeric arrays using Join and return the expected result', () => {
+    let oneArray = ["One", "Two", "Three", "Four"];
+    let otherArray = ["One", "Two", "Five", "Six"];
+    let result = oneArray.Join<string, string>(otherArray, s => s, t => t, (s, t) => s);
+    expect(result).toEqual(["One", "Two"]);
+  });
 
   it('can retrieve props for a class items of an array', () => {
     let heroes: Hero[] = [<Hero>{ name: "Han Solo", age: 44, gender: "M" }, <Hero>{ name: "Leia", age: 29, gender: "F" }, <Hero>{ name: "Luke", age: 24, gender: "M" }, <Hero>{ name: "Lando", age: 47, gender: "M" }];

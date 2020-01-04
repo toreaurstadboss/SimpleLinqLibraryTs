@@ -2,12 +2,16 @@ export { } //creating a module of below code
 declare global {
   type predicate<T> = (arg: T) => boolean;
   type sortingValue<T> = (arg: T) => any;
+  type keySelector<T> = (arg: T) => any;
+  type resultSelector<T, TInner> = (arg: T, arg2: TInner) => any;
   interface Array<T> {
     FirstOrDefault<T>(condition: predicate<T>): T;
     SingleOrDefault<T>(condition: predicate<T>): T;
     First<T>(condition: predicate<T>): T;
     Single<T>(condition: predicate<T>): T;
     LastOrDefault<T>(condition: predicate<T>): T;
+    Join<T, TInner>(otherArray: TInner[], outerKeySelector: keySelector<T>,
+      innerKeySelector: keySelector<TInner>, res: resultSelector<T, TInner>): any[];
     Where<T>(condition: predicate<T>): T[];
     Count<T>(): number;
     CountBy<T>(condition: predicate<T>): number;
@@ -54,6 +58,27 @@ declare global {
     ElementAtOrDefault<T>(index: number);
     Aggregate<T>(accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
     AggregateSelect<T>(property: (keyof T), accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
+  }
+}
+
+if (!Array.prototype.Join) {
+  Array.prototype.Join = function <T, TInner>(otherArray: TInner[], outerKeySelector: keySelector<T>,
+    innerKeySelector: keySelector<TInner>, res: resultSelector<T, TInner>): any[] {
+    if (this === null || this === undefined || otherArray === null || otherArray === undefined) {
+      return []; //return empty if undefined or null array(s)
+    }
+    let result: any[] = [];
+    this.forEach(element => {
+      let itemKey = outerKeySelector(element);
+      otherArray.forEach(otherArrayElement => {
+        let otherArrayItemKey = innerKeySelector(otherArrayElement);
+        if (defaultCompare(itemKey, otherArrayItemKey)) {
+          let itemToAdd = res(element, otherArrayElement);
+          result.push(itemToAdd);
+        }
+      });
+    });
+    return result;
   }
 }
 
