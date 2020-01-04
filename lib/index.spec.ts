@@ -1,809 +1,377 @@
-export { } //creating a module of below code
-declare global {
-  type predicate<T> = (arg: T) => boolean;
-  type sortingValue<T> = (arg: T) => any;
-  interface Array<T> {
-    FirstOrDefault<T>(condition: predicate<T>): T;
-    SingleOrDefault<T>(condition: predicate<T>): T;
-    First<T>(condition: predicate<T>): T;
-    Single<T>(condition: predicate<T>): T;
-    LastOrDefault<T>(condition: predicate<T>): T;
-    Where<T>(condition: predicate<T>): T[];
-    Count<T>(): number;
-    CountBy<T>(condition: predicate<T>): number;
-    Select<T>(...properties: (keyof T)[]): any[];
-    GroupBy<T>(groupFunc: (arg: T) => string): any[];
-    EnumerableRange(start: number, count: number): number[];
-    Any<T>(condition: predicate<T>): boolean;
-    Contains<T>(item: T): boolean;
-    All<T>(condition: predicate<T>): boolean;
-    MaxSelect<T>(property: (keyof T)): any;
-    MinSelect<T>(property: (keyof T)): any;
-    Average<T>(): number;
-    AverageSelect<T>(property: (keyof T)): number;
-    Max(): any;
-    Min(): any;
-    Sum(): any;
-    Reverse<T>(): T[];
-    Empty<T>(): T[];
-    Except<T>(otherArray: T[]): T[];
-    Intersect<T>(otherArray: T[]): T[];
-    Union<T>(otherArray: T[]): T[];
-    Cast<TOtherType>(TOtherType: Function): TOtherType[];
-    TryCast<TOtherType>(TOtherType: Function): TOtherType[];
-    GetProperties<T>(TClass: Function, sortProps: boolean): string[];
-    Concat<T>(otherArray: T[]): T[];
-    Distinct<T>(): T[];
-    DistinctBy<T>(property: (keyof T)): any;
-    SumSelect<T>(property: (keyof T)): any;
-    Intersect<T>(otherArray: T[]): T[];
-    IntersectSelect<T>(property: (keyof T), otherArray: T[]): T[];
-    MinSelect<T>(property: (keyof T)): any;
-    OrderBy<T>(sortMember: sortingValue<T>): T[];
-    OrderByDescending<T>(sortMember: sortingValue<T>): T[];
-    ThenBy<T>(sortMember: sortingValue<T>): T[];
-    OfType<T>(compareObject: T): T[];
-    SequenceEqual<T>(compareArray: T): boolean;
-    Take<T>(count: number): T[];
-    ToDictionary<T>(keySelector: (arg: T) => string): any;
-    TakeWhile<T>(condition: predicate<T>): T[];
-    SkipWhile<T>(condition: predicate<T>): T[];
-    Skip<T>(count: number): T[];
-    defaultComparerSort<T>(x: T, y: T);
-    ElementAt<T>(index: number);
-    ElementAtOrDefault<T>(index: number);
-    Aggregate<T>(accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
-    AggregateSelect<T>(property: (keyof T), accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
+import { StarWarsMovies } from "./starwarsmovies";
+import { Movie } from './movie';
+
+class SomeClass {
+  Num: number;
+  Name: string;
+}
+
+class SomeOtherClass {
+  SomeOtherNum: number;
+  SomeName: string;
+}
+
+class Student {
+  StudentID: number;
+  StudentName: string;
+  Age: number;
+}
+
+class Hero {
+  name: string;
+  gender: string;
+  age: number;
+  constructor(name: string = "", gender: string = "", age: number = 0) {
+    this.name = name;
+    this.gender = gender;
+    this.age = age;
   }
 }
 
-if (!Array.prototype.GetProperties) {
-  Array.prototype.GetProperties = function <T>(TClass: any = null, sortProps: boolean = false): string[] {
-    if (TClass === null || TClass === undefined) {
-      if (this === null || this === undefined || this.length === 0) {
-        return []; //not possible to find out more information - return empty array
-      }
-    }
-    // debugger
-    if (TClass !== null && TClass !== undefined) {
-      if (this !== null && this !== undefined) {
-        if (this.length > 0) {
-          let knownProps: string[] = Describer.describe(this[0]).Where(x => x !== null && x !== undefined);
-          if (sortProps && knownProps !== null && knownProps !== undefined) {
-            knownProps = knownProps.OrderBy(p => p);
-          }
-          return knownProps;
-        }
-        if (TClass !== null && TClass !== undefined) {
-          let knownProps: string[] = Describer.describe(TClass).Where(x => x !== null && x !== undefined);
-          if (sortProps && knownProps !== null && knownProps !== undefined) {
-            knownProps = knownProps.OrderBy(p => p);
-          }
-          return knownProps;
-        }
-      }
-    }
-    return []; //give up..
+class HeroWithAbility extends Hero {
+  ability: string;
+  constructor(ability: string = "") {
+    super();
+    this.ability = ability;
   }
 }
 
-if (!Array.prototype.Cast) {
-  Array.prototype.Cast = function <TOtherType>(TOtherType: Function): TOtherType[] {
-    if (this === null || this === undefined) {
-      return [];
-    }
-    let result = [];
-    this.forEach(el => {
-      let elementCasted = <TOtherType>el;
-      //debugger
-      let desc = Describer.describe(TOtherType, true);
-      ObjectInitializer.initialize(desc, elementCasted);
-      result.push(elementCasted);
-    });
-    return result;
-  }
-}
+describe('Array Extensions tests for TsExtensions Linq esque library', () => {
 
-if (!Array.prototype.TryCast) {
-  Array.prototype.TryCast = function <TOtherType>(TOtherType: Function): TOtherType[] {
-    if (this === null || this === undefined) {
-      return [];
-    }
-    let result = [];
-    this.forEach(el => {
-      try {
-        let elementCasted = <TOtherType>el;
-        //debugger
-        let desc = Describer.describe(TOtherType, true);
-        ObjectInitializer.initialize(desc, elementCasted);
-        result.push(elementCasted);
-      }
-      catch (Error) {
-        //swallow
-      }
-    });
-    return result;
-  }
-}
-
-if (!Array.prototype.Empty) {
-  Array.prototype.Empty = function <T>(): T[] {
-    if (this === undefined || this === null) {
-      return [];
-    }
-    return this;
-  }
-}
-
-if (!Array.prototype.Intersect) {
-  Array.prototype.Intersect = function <T>(otherArray: T[]): T[] {
-    if (this === undefined || this === null) {
-      return [];
-    }
-    let result = this.Where(item => otherArray.Any(x => defaultCompare(x, item)));
-    return result;
-  }
-}
-
-if (!Array.prototype.Reverse) {
-  Array.prototype.Reverse = function <T>(): T[] {
-    if (this === null || this === undefined) {
-      return [];
-    }
-    let result = this.reverse();
-    return result;
-  }
-}
-
-if (!Array.prototype.Except) {
-  Array.prototype.Except = function <T>(otherArray: T[]): T[] {
-    if (this === null || this === undefined || otherArray === null || otherArray === undefined) {
-      return [];
-    }
-    let result = this.Where(item => !otherArray.Any(x => defaultCompare(x, item)));
-    return result;
-  }
-}
-
-if (!Array.prototype.Union) {
-  Array.prototype.Union = function <T>(otherArray: T[]): T[] {
-    if (this === null || this === undefined || otherArray === null || otherArray === undefined) {
-      return [];
-    }
-    let result = this.Concat(otherArray);
-    result = result.Distinct();
-    return result;
-  }
-}
-
-if (!Array.prototype.Concat) {
-  Array.prototype.Concat = function <T>(otherArray: T[]): T[] {
-    if (this === null || this === undefined || otherArray === null || otherArray === undefined) {
-      return [];
-    }
-    let result = this.concat(otherArray);
-    return result;
-  }
-}
-
-if (!Array.prototype.Distinct) {
-  Array.prototype.Distinct = function <T>(): T[] {
-    if (this === null || this === undefined) {
-      return [];
-    }
-    let distinctRunOnArray = this.filter((value, index, array) => array.indexOf(value) === index);
-    return distinctRunOnArray;
-  }
-}
-
-if (!Array.prototype.DistinctBy) {
-  Array.prototype.DistinctBy = function <T>(property: (keyof T)): T[] {
-    if (this === null || this === undefined) {
-      return [];
-    }
-    let filteringArray = this.Select(property).map(n => n[property]);
-
-    let distinctRunOnArray = this.filter((value, index, array) => {
-      let valueProperty = value[property];
-      return filteringArray.indexOf(valueProperty) === index;
-    });
-    return distinctRunOnArray;
-  }
-}
-
-if (!Array.prototype.CountBy) {
-  Array.prototype.CountBy = function <T>(condition: predicate<T>): number {
-    if (this === null || this === undefined)
-      return 0;
-    let result = 0;
-    this.forEach(el => {
-      if (condition(el)) {
-        result++;
-      }
-    });
-    return result;
-  }
-}
-
-if (!Array.prototype.Count) {
-  Array.prototype.Count = function <T>(): number {
-    return this !== null && this !== undefined ? this.length : 0;
-  }
-}
-
-if (!Array.prototype.Average) {
-  Array.prototype.Average = function <T>(): number {
-    if (this === null || this === undefined || this.length === 0)
-      return null;
-    if (this.Any(x => typeof x !== "number")) {
-      throw Error('Can only calculate Average on arrays with only numeric items');
-    }
-    const reducerFunc = (accumulator, currentValue) => (accumulator + currentValue);
-    let result = this.reduce(reducerFunc) / this.length;
-    return result;
-  }
-}
-
-if (!Array.prototype.AverageSelect) {
-  Array.prototype.AverageSelect = function <T>(property: (keyof T)): number {
-    if (this === null || this === undefined || this.length === 0)
-      return null;
+  it('can retrieve props for a class items of an array', () => {
+    let heroes: Hero[] = [<Hero>{ name: "Han Solo", age: 44, gender: "M" }, <Hero>{ name: "Leia", age: 29, gender: "F" }, <Hero>{ name: "Luke", age: 24, gender: "M" }, <Hero>{ name: "Lando", age: 47, gender: "M" }];
+    let foundProps = heroes.GetProperties(Hero, false);
     //debugger
-    if (this.Select(property).map(n => n[property]).Any(x => typeof x !== "number")) {
-      throw Error('Can only calculate Average on arrays with only numeric items');
-    }
-    const reducerFunc = (accumulator, currentValue) => (accumulator + currentValue);
-    let result = this.Select(property).map(n => n[property]).reduce(reducerFunc) / this.length;
-    return result;
-  }
-}
+    let expectedArrayOfProps = ["name", "age", "gender"];
+    expect(foundProps).toEqual(expectedArrayOfProps);
+    expect(heroes.GetProperties(Hero, true)).toEqual(["age", "gender", "name"]);
+  });
 
-if (!Array.prototype.Aggregate) {
-  Array.prototype.Aggregate = function <T>(accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any {
+  it('can retrieve props for a class only knowing its function', () => {
+    let heroes: Hero[] = [];
+    let foundProps = heroes.GetProperties(Hero, false);
+    let expectedArrayOfProps = ["this.name", "this.gender", "this.age"];
+    expect(foundProps).toEqual(expectedArrayOfProps);
+    let foundPropsThroughClassFunction = heroes.GetProperties(Hero, true);
     //debugger
-    if (reducerFunc === undefined || reducerFunc === null) {
-      reducerFunc = (accumulator, currentValue) => accumulator + currentValue;
-    }
-    let result = this.reduce(reducerFunc);
-    return result;
-  }
-}
-
-if (!Array.prototype.AggregateSelect) {
-  Array.prototype.AggregateSelect = function <T>(property: (keyof T), accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any {
-    //debugger
-    if (reducerFunc === undefined || reducerFunc === null) {
-      reducerFunc = (accumulator, currentValue) => accumulator + currentValue;
-    }
-    //debugger
-    let result = this.Select(property).map(n => n[property]).reduce(reducerFunc);
-    return result;
-  }
-}
-
-if (!Array.prototype.Intersect) {
-  Array.prototype.Intersect = function <T>(otherArray: T[]): T[] {
-    if (otherArray === undefined || otherArray === null)
-      return [];
-    if (this === undefined || this === null)
-      return [];
-    let result = [];
-    this.forEach(el => {
-      if (otherArray.Any(item => item == el)) {
-        result.push(el);
-      }
-    });
-    return result;
-  }
-}
-
-if (!Array.prototype.IntersectSelect) {
-  Array.prototype.IntersectSelect = function <T>(property: (keyof T), otherArray: T[]): T[] {
-    if (otherArray === undefined || otherArray === null)
-      return [];
-    if (this === undefined || this === null)
-      return [];
-    let result = [];
-    this.forEach(el => {
-      let itemValue = el[property];
-      if (otherArray.Select(property).map(n => n[property]).Any(x => x == itemValue)) {
-        result.push(el);
-      }
-    });
-    return result;
-  }
-}
-
-if (!Array.prototype.ElementAt) {
-  Array.prototype.ElementAt = function <T>(index: number) {
-    if (index < 0)
-      throw Error('Index must be a positive number!');
-    if (index > this.length) {
-      throw Error('Index must not be out of bounds! Max length is: ' + index);
-    }
-    return this[index];
-  }
-}
-
-if (!Array.prototype.ElementAtOrDefault) {
-  Array.prototype.ElementAt = function <T>(index: number) {
-    if (index < 0)
-      throw Error('Index must be a positive number!');
-    if (index > this.length) {
-      return null;
-    }
-    return this[index];
-  }
-}
-
-if (!Array.prototype.Take) {
-  Array.prototype.Take = function <T>(count: number): T[] {
-    if (!Array.isArray(this))
-      throw Error('The object this must be of type array!');
-    let clonedArray = [...this];
-    let result: T[] = [];
-    for (let index = 0; index < count; index++) {
-      if (index >= clonedArray.length)
-        break;
-      result.push(clonedArray[index]);
-    }
-    return result;
-  }
-}
-
-if (!Array.prototype.TakeWhile) {
-  Array.prototype.TakeWhile = function <T>(condition: predicate<T>): T[] {
-    if (!Array.isArray(this))
-      throw Error('The object this must be of type array!'); //this should not occur..
-    if (this === null || this === undefined || this.length === 0)
-      return [];
-    let clonedArray = [...this];
-    let result: T[] = [];
-    for (let index = 0; index < clonedArray.length; index++) {
-      if (condition(this[index]))
-        result.push(clonedArray[index]);
-      else
-        break; //takewhile - exit if condition no longer is viable
-    }
-    return result;
-  }
-}
-
-if (!Array.prototype.SkipWhile) {
-  Array.prototype.SkipWhile = function <T>(condition: predicate<T>): T[] {
-    if (!Array.isArray(this))
-      throw Error('The object this must be of type array!'); //this should not occur..
-    if (this === null || this === undefined || this.length === 0)
-      return [];
-    let clonedArray = [...this];
-    let result: T[] = [];
-    for (let index = 0; index < clonedArray.length; index++) {
-      if (condition(this[index]))
-        continue;
-      result.push(clonedArray[index]);
-    }
-    return result;
-  }
-}
-
-if (!Array.prototype.Skip) {
-  Array.prototype.Skip = function <T>(count: number): T[] {
-    if (!Array.isArray(this))
-      throw Error('The object this must be of type array!');
-    let clonedArray = [...this];
-    let result: T[] = [];
-    for (let index = count; index < this.length; index++) {
-      result.push(clonedArray[index]);
-    }
-    return result;
-  }
-}
-
-if (!Array.prototype.SequenceEqual) {
-  Array.prototype.SequenceEqual = function <T>(compareArray: T): boolean {
-    if (!Array.isArray(this) || !Array.isArray(compareArray) || this.length !== compareArray.length)
-      return false;
-    var arr1 = this.concat().sort();
-    var arr2 = compareArray.concat().sort();
-    for (var i = 0; i < arr1.length; i++) {
-      if (arr1[i] !== arr2[i])
-        return false;
-    }
-    return true;
-  }
-}
-
-if (!Array.prototype.OrderBy) {
-  Array.prototype.OrderBy = function <T>(sortMember: sortingValue<T>): T[] {
-    let result = this.sort(function (a, b) {
-      let aValue = sortMember(a);
-      let bValue = sortMember(b);
-      let sortValue = Array.prototype.defaultComparerSort(aValue, bValue);
-      return sortValue;
-    });
-    return result;
-  }
-}
-
-if (!Array.prototype.OrderByDescending) {
-  Array.prototype.OrderByDescending = function <T>(sortMember: sortingValue<T>): T[] {
-    let result = this.sort(function (a, b) {
-      let aValue = sortMember(a);
-      let bValue = sortMember(b);
-      let sortValue = -1 * Array.prototype.defaultComparerSort(aValue, bValue);
-      return sortValue;
-    });
-    return result;
-  }
-}
-
-function isOfSimilarShape<T>(input: any, compareObject: T): boolean {
-  if (input === undefined || input === null || compareObject === undefined || compareObject === null)
-    return false;
-
-  let propsOfInput = Object.keys(input);
-  let propsOfCompareObject = Object.keys(compareObject);
-  //debugger
-  let sameShapeOfInputAndCompareObject = propsOfInput.SequenceEqual(propsOfCompareObject);
-  return sameShapeOfInputAndCompareObject;
-}
-
-if (!Array.prototype.OfType) {
-  Array.prototype.OfType = function <T>(compareObject: T): T[] {
-    let result: T[] = [];
-    this.forEach(el => {
-      //debugger
-      let t: T = null;
-      if (isOfSimilarShape(el, compareObject))
-        result.push(el);
-    });
-    return result;
-  }
-}
-
-if (!Array.prototype.ThenBy) {
-  Array.prototype.ThenBy = function <T>(sortMember: sortingValue<T>): T[] {
-    //let inputArray = arguments.callee.caller;
-    if (!Array.isArray(this)) {
-      throw Error('Input array must be actually an array!');
-    }
-    return this.OrderBy(sortMember);
-    //return inputArray.OrderBy<T>(sortMember); //same implementation
-  }
-}
-
-if (!Array.prototype.MaxSelect) {
-  Array.prototype.MaxSelect = function <T>(property: (keyof T)): any {
-    let result = this.Select(property).map(n => n[property]).sort(this.defaultComparerSort).LastOrDefault(x => x);
-    return result;
-  }
-}
-
-if (!Array.prototype.Max) {
-  Array.prototype.Max = function <T>(): any {
-    if (!Array.isArray(this)) {
-      throw Error('Input array (this) must be actually an array!');
-    }
-    let result = this.sort(this.defaultComparerSort).LastOrDefault(x => x);
-    return result;
-  }
-}
-
-if (!Array.prototype.MinSelect) {
-  Array.prototype.MinSelect = function <T>(property: (keyof T)): any {
-    let result = this.Select(property).map(n => n[property]).sort(this.defaultComparerSort).FirstOrDefault(x => x);
-    return result;
-  }
-}
-
-if (!Array.prototype.Min) {
-  Array.prototype.Min = function <T>(): any {
-    if (!Array.isArray(this)) {
-      throw Error('Input array (this) must be actually an array!');
-    }
-    let result = this.sort(this.defaultComparerSort).FirstOrDefault(x => x);
-    return result;
-  }
-}
-
-if (!Array.prototype.Sum) {
-  Array.prototype.Sum = function <T>(): any {
-    if (!Array.isArray(this)) {
-      throw Error('Input array (this) must be actually an array!');
-    }
-    let result = this.Aggregate(0, 0, null);
-    return result;
-  }
-}
-
-if (!Array.prototype.SumSelect) {
-  Array.prototype.SumSelect = function <T>(property: (keyof T)): any {
-    if (!Array.isArray(this)) {
-      throw Error('Input array (this) must be actually an array!');
-    }
-    let result = this.Select(property).map(n => n[property]).Aggregate(0, 0, null);
-    return result;
-  }
-}
-
-if (!Array.prototype.FirstOrDefault) {
-  Array.prototype.FirstOrDefault = function <T>(condition: predicate<T>): T {
-    let matchingItems: T[] = this.filter((item: T) => {
-      if (condition(item))
-        return item;
-    });
-    return matchingItems.length > 0 ? matchingItems[0] : null;
-  }
-}
-
-if (!Array.prototype.First) {
-  Array.prototype.First = function <T>(condition: predicate<T>): T {
-    let matchingItems: T[] = this.filter((item: T) => {
-      if (condition(item))
-        return item;
-    });
-    if (matchingItems === null || matchingItems === undefined || matchingItems.length === 0) {
-      throw Error('Invalid operation. No items found.');
-    }
-    return matchingItems[0];
-  }
-}
-
-if (!Array.prototype.Single) {
-  Array.prototype.Single = function <T>(condition: predicate<T>): T {
-    let matchingItems: T[] = this.filter((item: T) => {
-      if (condition(item))
-        return item;
-    });
-    if (matchingItems === null || matchingItems === undefined || matchingItems.length === 0) {
-      throw Error('Invalid operation. No items found.');
-    }
-    if (matchingItems.length > 1) {
-      throw Error('Invalid operation. More than one items found.');
-    }
-    return matchingItems[0];
-  }
-}
-
-if (!Array.prototype.SingleOrDefault) {
-  Array.prototype.SingleOrDefault = function <T>(condition: predicate<T>): T {
-    let matchingItems: T[] = this.filter((item: T) => {
-      if (condition(item))
-        return item;
-    });
-    if (matchingItems === null || matchingItems === undefined) {
-      throw Error('Invalid operation. Got null or undefined.');
-    }
-    if (matchingItems.length > 1) {
-      throw Error('Invalid operation. More than one items found.');
-    }
-    return matchingItems.length > 0 ? matchingItems[0] : null;
-  }
-}
-
-if (!Array.prototype.Any) {
-  Array.prototype.Any = function <T>(condition: predicate<T>): boolean {
-    if (this.length === 0)
-      return false;
-    let result: boolean = false;
-    for (let index = 0; index < this.length; index++) {
-      const element = this[index];
-      if (condition(element)) {
-        result = true;
-        break;
-      }
-    }
-    return result;
-  }
-}
-
-if (!Array.prototype.Contains) {
-  Array.prototype.Contains = function <T>(item: T): boolean {
-    if (this.length === 0)
-      return false;
-    let result: boolean = false;
-    for (let index = 0; index < this.length; index++) {
-      const element = this[index];
-      if (defaultCompare(item, element)) {
-        result = true;
-        break;
-      }
-    }
-    return result;
-  }
-}
-
-if (!Array.prototype.All) {
-  Array.prototype.All = function <T>(condition: predicate<T>): boolean {
-    if (this.length === 0)
-      return false;
-    let result: boolean = true;
-    for (let index = 0; index < this.length; index++) {
-      const element = this[index];
-      if (!condition(element)) {
-        result = false;
-      }
-    }
-    return result;
-  }
-}
-
-if (!Array.prototype.LastOrDefault) {
-  Array.prototype.LastOrDefault = function <T>(condition: predicate<T>): T {
-    let matchingItems: T[] = this.filter((item: T) => {
-      if (condition(item))
-        return item;
-    });
-    return matchingItems.length > 0 ? matchingItems[matchingItems.length - 1] : null;
-  }
-}
-
-if (!Array.prototype.Select) {
-  Array.prototype.Select = function <T>(...properties: (keyof T)[]): any[] {
-    let result = [];
-    for (let i = 0; i < this.length; i++) {
-      let item: any = {};
-      for (let j = 0; j < properties.length; j++) {
-        let key = properties[j];
-        item[key] = this[i][properties[j]];
-      }
-      result.push(item);
-    }
-    return result;
-  }
-}
-
-if (!Array.prototype.GroupBy) {
-  Array.prototype.GroupBy = function <T>(groupFunc: (arg: T) => string): any[] {
-    let groups: any = {};
-    this.forEach(el => {
-      let itemKeyValue: any = groupFunc(el);
-      if (itemKeyValue in groups === false) {
-        groups[itemKeyValue] = [];
-      }
-      groups[itemKeyValue].push(el);
-    });
-    let result = Object.keys(groups).map(key => {
-      return {
-        key: key,
-        values: groups[key]
-      }
-    });
-    return result;
-  }
-}
-
-if (!Array.prototype.ToDictionary) {
-  Array.prototype.ToDictionary = function <T>(keySelector: (arg: T) => string): any[] {
-    let result = this.reduce((r, o) => Object.assign(r, { [keySelector(o)]: o }), {});
-    return result;
-  }
-}
-
-function* Range(start, count) {
-  for (let x = start; x < start + count; x++) {
-    yield x;
-  }
-}
-
-if (!Array.prototype.EnumerableRange) {
-  Array.prototype.EnumerableRange = function (start: number, count: number): number[] {
-    let generatedRange = [...Range(start, count)];
-    return generatedRange;
-  }
-}
-
-
-if (!Array.prototype.Where) {
-  Array.prototype.Where = function <T>(condition: predicate<T>): T[] {
-
-    let matchingItems: T[] = this.filter((item: T) => {
-
-      if (condition(item)) {
-        return true;
-      }
-    });
-    return matchingItems;
-  }
-}
-
-const toStringItem = obj => {
-  //ECMA specification: http://www.ecma-international.org/ecma-262/6.0/#sec-tostring
-
-  if (obj === null)
-    return "null";
-
-  if (typeof obj === "boolean" || typeof obj === "number")
-    return obj;
-
-  if (typeof obj === "string")
-    return obj;
-
-  if (typeof obj === "symbol")
-    throw new TypeError();
-
-  //we know we have an object. perhaps return JSON.stringify?
-  //return (obj).toString(); //JSON.stringify(obj) ?
-  return JSON.stringify(obj);
-};
-
-const defaultCompare = function <T>(x: T, y: T) {
-  let resultCompare = [].defaultComparerSort(x, y);
-  return resultCompare === 0 ? true : false;
-}
-
-if (!Array.prototype.defaultComparerSort) {
-  Array.prototype.defaultComparerSort = function <T>(x: T, y: T) {
-    //INFO: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort
-    //ECMA specification: http://www.ecma-international.org/ecma-262/6.0/#sec-sortcompare
-
-    if (x === undefined && y === undefined)
-      return 0;
-
-    if (x === undefined)
-      return 1;
-
-    if (y === undefined)
-      return -1;
-
-    const xString = toStringItem(x);
-    const yString = toStringItem(y);
-
-    if (xString < yString)
-      return -1;
-
-    if (xString > yString)
-      return 1;
-
-    return 0;
-  }
-
-}
-
-class Describer {
-  private static FRegEx = new RegExp(/(?:this\.)(.+?(?= ))/g);
-  static describe(val: any, parent = false): string[] {
-    let isFunction = Object.prototype.toString.call(val) == '[object Function]';
-    if (isFunction) {
-      let result = [];
-      if (parent) {
-        var proto = Object.getPrototypeOf(val.prototype);
-        if (proto) {
-          result = result.concat(this.describe(proto.constructor, parent));
-        }
-      }
-      result = result.concat(val.toString().match(this.FRegEx));
-      result = result.Where(r => r !== null && r !== undefined);
-      return result;
-    }
-    else {
-      if (typeof val == "object") {
-        let knownProps: string[] = Object.getOwnPropertyNames(val);
-        return knownProps;
-      }
-    }
-    return val !== null ? [val.tostring()] : [];
-  }
-}
-
-class ObjectInitializer {
-
-  static initialize(properties: string[], inputObject: any): void {
-    properties.forEach(prop => {
-      let adjustedProp = prop.replace("this.", "");
-      if (inputObject[adjustedProp] === undefined) {
-        //the property is missing
-        inputObject[adjustedProp] = null;
-      }
-    });
-
-  }
-
-}
-
-
-
-
-
-
-
+    expect(foundPropsThroughClassFunction.SequenceEqual(["this.age", "this.gender", "this.name"])).toBe(true);
+  });
+
+  it('can apply method ToDictionary on an array, allowing specificaton of a key selector for the dictionary object', () => {
+    let heroes = [{ name: "Han Solo", age: 44, gender: "M" }, { name: "Leia", age: 29, gender: "F" }, { name: "Luke", age: 24, gender: "M" }, { name: "Lando", age: 47, gender: "M" }];
+    let dictionaryOfHeroes = heroes.ToDictionary<Hero>(x => x.name);
+
+    let expectedDictionary = {
+      "Han Solo": {
+        name: "Han Solo", age: 44, gender: "M"
+      },
+      "Leia": {
+        name: "Leia", age: 29, gender: "F"
+      },
+      "Luke": {
+        name: "Luke", age: 24, gender: "M"
+      },
+      "Lando":
+        { name: "Lando", age: 47, gender: "M" }
+    };
+    expect(dictionaryOfHeroes).toEqual(expectedDictionary);
+  });
+
+  it('can apply method Cast on an array, casting items to other type', () => {
+    let heroes = [{ name: "Han Solo", age: 44, gender: "M" }, { name: "Leia", age: 29, gender: "F" }, { name: "Luke", age: 24, gender: "M" }, { name: "Lando", age: 47, gender: "M" }];
+    let castedArray = heroes.Cast<HeroWithAbility>(HeroWithAbility);
+    let expectedArrayString = "[{\"name\":\"Han Solo\",\"age\":44,\"gender\":\"M\",\"ability\":null},{\"name\":\"Leia\",\"age\":29,\"gender\":\"F\",\"ability\":null},{\"name\":\"Luke\",\"age\":24,\"gender\":\"M\",\"ability\":null},{\"name\":\"Lando\",\"age\":47,\"gender\":\"M\",\"ability\":null}]";
+    expect(JSON.stringify(castedArray)).toBe(expectedArrayString);
+  });
+
+  it('can decide if a compound array of objects contains our target item', () => {
+    let firstMovieStarringJarJar = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);
+    let foundJarJar = StarWarsMovies.Contains(firstMovieStarringJarJar);
+    expect(foundJarJar).toBe(true);
+    let somenums = [1, 3, 4, 5];
+    expect(somenums.Contains(4)).toBe(true);
+    expect(somenums.Contains(33)).toBe(false);
+  });
+
+  it('can return the first or default result using FirstOrDefault on a given array', () => {
+    let firstMovieStarringJarJar = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);
+    expect(firstMovieStarringJarJar !== null).toBe(true);
+    let firstMovieStarringBruceWillis = StarWarsMovies.FirstOrDefault<Movie>(m => m.main_characters.indexOf('Bruce Willis') > 0);
+    expect(firstMovieStarringBruceWillis === null).toBe(true);
+  });
+
+  it('can return the first or default result using First on a given array', () => {
+    let firstMovieStarringJarJar = StarWarsMovies.First<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);
+    expect(firstMovieStarringJarJar !== null).toBe(true);
+    expect(() => StarWarsMovies.First<Movie>(m => m.main_characters.indexOf('Bruce Willis') > 0)).toThrow(new Error("Invalid operation. No items found."));
+  });
+
+  it('can return the first or default result using SingleOrDefault on a given array', () => {
+    let firstMovieStarringJarJar = StarWarsMovies.SingleOrDefault<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);
+    expect(firstMovieStarringJarJar !== null).toBe(true);
+    expect(() => StarWarsMovies.SingleOrDefault<Movie>(m => m.main_characters.indexOf('Han Solo') > 0)).toThrow(new Error("Invalid operation. More than one items found."));
+  });
+
+  it('can return the first or default result using Single on a given array', () => {
+    let firstMovieStarringJarJar = StarWarsMovies.Single<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);
+    expect(firstMovieStarringJarJar !== null).toBe(true);
+    expect(() => StarWarsMovies.Single<Movie>(m => m.main_characters.indexOf('Han Solo') > 0)).toThrow(new Error("Invalid operation. More than one items found."));
+  });
+
+  it('can run reverse and return the reversed array', () => {
+    let firstArray = ["One", "Two", "Three", "Four", "Five"];
+    let result = firstArray.Reverse();
+    expect(result).toEqual(["Five", "Four", "Three", "Two", "One"]);
+  });
+
+  it('can return a trivial empty array using Empty operator', () => {
+    let emptyArray = Array.prototype.Empty();
+    expect(emptyArray.length).toEqual(0);
+  });
+
+  it('can concatenate two arrays and return all items from both arrays into one array concatenated', () => {
+    let firstArray = ["One", "Two", "Three", "Four", "Five"];
+    let secondArray = ["Four", "Five", "Six", "Seven", "Eight"];
+    let result = firstArray.Concat(secondArray);
+    expect(result).toEqual(["One", "Two", "Three", "Four", "Five", "Four", "Five", "Six", "Seven", "Eight"]);
+  });
+
+  it('can return a union of two arrays into one array with distinct items of these two', () => {
+    let firstArray = ["One", "Two", "Three", "Four", "Five"];
+    let secondArray = ["Four", "Five", "Six", "Seven", "Eight"];
+    let result = firstArray.Union(secondArray);
+    expect(result).toEqual(["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight"]);
+  });
+
+  it('can run Intersect to find items in both arrays', () => {
+    let firstArray = ["One", "Two", "Three", "Four", "Five"];
+    let secondArray = ["Four", "Five", "Six", "Seven", "Eight"];
+    let result = firstArray.Intersect(secondArray);
+    expect(result).toEqual(["Four", "Five"]);
+  });
+
+  it('can run Except to filter out items from the other array present also in the first array', () => {
+    let firstArray = ["One", "Two", "Three", "Four", "Five"];
+    let secondArray = ["Four", "Five", "Six", "Seven", "Eight"];
+    let result = firstArray.Except(secondArray);
+    expect(result).toEqual(["One", "Two", "Three"]);
+  });
+
+  it('can aggregate items to expected result using Aggregate on array of items of numbers', () => {
+    let someNums = [1, 2, 3, 4];
+    let result = someNums.Aggregate(0, 0, null);
+    expect(result).toBe(10);
+  });
+
+  it('can sum items to expected result using Sum on array of items of numbers', () => {
+    let someNums = [1, 2, 3, 4, 14];
+    let result = someNums.Aggregate(0, 0, null);
+    expect(result).toBe(24);
+  });
+
+  it('can sum items to expected result using SumSelect on array of items of numbers', () => {
+    let someArray: any[] = [];
+    someArray.push(<SomeClass>{ Name: "Foo", Num: 1 });
+    someArray.push(<SomeClass>{ Name: "FooBaz", Num: 4 });
+    someArray.push(<SomeClass>{ Name: "AllyoBaze", Num: 7 });
+    let result = someArray.SumSelect<SomeClass>("Num");
+    expect(result).toBe(12);
+  });
+
+  it('can count items to expected result using Count on array of items of numbers', () => {
+    let someNums = [1, 2, 3, 4];
+    let result = someNums.Count();
+    expect(result).toBe(4);
+  });
+
+  it('can average items to expected result using Average on array of items of numbers', () => {
+    let someArray: Student[] = [];
+    someArray.push(<Student>{ StudentID: 1, StudentName: "John", Age: 13 });
+    someArray.push(<Student>{ StudentID: 2, StudentName: "Moin", Age: 21 });
+    someArray.push(<Student>{ StudentID: 3, StudentName: "Bill", Age: 18 });
+    someArray.push(<Student>{ StudentID: 4, StudentName: "Ram", Age: 20 });
+    someArray.push(<Student>{ StudentID: 5, StudentName: "Ron", Age: 15 });
+    let result = someArray.AverageSelect<Student>("Age");
+    expect(result).toBe(17.4);
+  });
+
+  it('can filter out duplicates using DistinctBy on array of items of objects', () => {
+    let someArray: Student[] = [];
+    someArray.push(<Student>{ StudentID: 1, StudentName: "John", Age: 13 });
+    someArray.push(<Student>{ StudentID: 2, StudentName: "Moin", Age: 21 });
+    someArray.push(<Student>{ StudentID: 2, StudentName: "Moin", Age: 21 });
+    someArray.push(<Student>{ StudentID: 4, StudentName: "Ram", Age: 20 });
+    someArray.push(<Student>{ StudentID: 5, StudentName: "Ron", Age: 15 });
+    let expectedArray: Student[] = [];
+    expectedArray.push(<Student>{ StudentID: 1, StudentName: "John", Age: 13 });
+    expectedArray.push(<Student>{ StudentID: 2, StudentName: "Moin", Age: 21 });
+    expectedArray.push(<Student>{ StudentID: 4, StudentName: "Ram", Age: 20 });
+    expectedArray.push(<Student>{ StudentID: 5, StudentName: "Ron", Age: 15 });
+    let result = someArray.DistinctBy<Student>("StudentID");
+    expect(result).toEqual(expectedArray);
+  });
+
+  it('can filter out duplicates using Distinct on array of items of numbers', () => {
+    let someNums = [1, 2, 2, 3, 3, 4, 5, 6, 7, 7, 1];
+    let someNumsRemovedDuplicates = someNums.Distinct();
+    expect(someNumsRemovedDuplicates).toEqual([1, 2, 3, 4, 5, 6, 7,]);
+  });
+
+  it('can average items to expected result using AverageSelect on array of items of numbers', () => {
+    let someNums = [1, 2, 3, 4, 5];
+    let result = someNums.Average();
+    expect(result).toBe(3);
+  });
+
+  it('can count items by condition to expected using CountBy result on array of items of numbers', () => {
+    let someNums = [1, 2, 3, 4];
+    let result = someNums.CountBy<any>(x => x % 2 === 0);
+    expect(result).toBe(2);
+  });
+
+  it('can aggregate items and project to expected result using AggregateSelect on array of items of objects', () => {
+    let someArray: any[] = [];
+    someArray.push(<SomeClass>{ Name: "Foo", Num: 1 });
+    someArray.push(<SomeClass>{ Name: "FooBaz", Num: 4 });
+    someArray.push(<SomeClass>{ Name: "AllyoBaze", Num: 7 });
+    let result = someArray.AggregateSelect<SomeClass>("Num", 0, 0, null);
+    expect(result).toBe(12);
+  });
+
+  it('can aggregate once more items and project to expected result using AggregateSelect on array of items of objects with accumulator value set initially', () => {
+    let someArray: Student[] = [];
+    someArray.push(<Student>{ StudentID: 1, StudentName: "John", Age: 13 });
+    someArray.push(<Student>{ StudentID: 2, StudentName: "Moin", Age: 21 });
+    someArray.push(<Student>{ StudentID: 3, StudentName: "Bill", Age: 18 });
+    someArray.push(<Student>{ StudentID: 4, StudentName: "Ram", Age: 20 });
+    someArray.push(<Student>{ StudentID: 5, StudentName: "Ron", Age: 15 });
+    let result = someArray.AggregateSelect<Student>("StudentName", "Student Names: ", 0, (a, b) => a + "," + b);
+    expect(result).toBe("John,Moin,Bill,Ram,Ron");
+  });
+
+  it('can take two items using Take(2)', () => {
+    let starwarsMovies = StarWarsMovies;
+    let firstTwoMovies = starwarsMovies.Take<Movie>(2).Select<Movie>("title").map(m => m.title);
+    expect(firstTwoMovies[0].toLowerCase()).toContain("phantom menace");
+    expect(firstTwoMovies[1].toLowerCase()).toContain("attack of the clones");
+  });
+
+  it('can take two items using Skip(4)', () => {
+    let starwarsMovies = StarWarsMovies;
+    let lastTwoMovies = starwarsMovies.Skip<Movie>(4).Select<Movie>("title").map(m => m.title);
+    expect(lastTwoMovies[0].toLowerCase()).toContain("empire strikes back");
+    expect(lastTwoMovies[1].toLowerCase()).toContain("return of the jedi");
+  });
+
+  it('can take next last movie using Skip(4).Take(1)', () => {
+    let starwarsMovies = StarWarsMovies;
+    let fiftMovie = starwarsMovies.Skip<Movie>(4).Take(1).Select<Movie>("title").map(m => m.title);
+    expect(fiftMovie[0].toLowerCase()).toContain("empire strikes back");
+    expect(fiftMovie.length).toBe(1);
+  });
+
+  it('can find desired items using OfType of type T', () => {
+    let someMixedArray: any[] = [];
+    someMixedArray.push(<SomeClass>{ Name: "Foo", Num: 1 });
+    someMixedArray.push(<SomeOtherClass>{ SomeName: "BarBazBaze", SomeOtherNum: 813 });
+    someMixedArray.push(<SomeClass>{ Name: "FooBaz", Num: 4 });
+    someMixedArray.push(<SomeOtherClass>{ SomeName: "BarBaze", SomeOtherNum: 13 });
+    someMixedArray.push(<SomeClass>{ Name: "AllyoBaze", Num: 7 });
+
+    let compareObject = <SomeClass>{ Name: "", Num: 0 };
+    let filteredArrayBySpecifiedType = someMixedArray.OfType(compareObject);
+    console.log(filteredArrayBySpecifiedType);
+
+    expect(filteredArrayBySpecifiedType.All(item => <SomeClass>item !== undefined)).toBe(true, "Expected only items of type SomeOtherClass in the filtered array after running OfType of SomeOtherClass on it.");
+  });
+
+  it('can take while using TakeWhile upon predicate the expected sequence', () => {
+    let someArray = [2, 4, 8, 12, 18, 13, 11];
+    expect(someArray.TakeWhile<any>(x => x % 2 == 0)).toEqual([2, 4, 8, 12, 18]);
+  });
+
+  it('can skip while using SkipWhile upon predicate the expected sequence', () => {
+    let someArray = [2, 4, 8, 12, 18, 13, 11];
+    expect(someArray.SkipWhile<any>(x => x % 2 == 0)).toEqual([13, 11]);
+  });
+
+  it('can intersect two arrays and return expected', () => {
+    let someArray = [1, 2, 3, 4, 5, 6, 7];
+    let otherArray = [5, 6, 7, 9, 11];
+    let intersection = someArray.Intersect(otherArray);
+    expect(intersection).toEqual([5, 6, 7]);
+  });
+
+  it('can intersect two arrays and project out property and return expected', () => {
+    let someArray = [{ Country: 'Norway', Capital: 'Oslo' }, { Country: 'Denmark', Capital: 'Copenhagen' }, { Country: 'Burkina Faso', Capital: 'Ougadougou' }, { Country: 'Finland', Capital: 'Helsinki' }];
+    let otherArray = [{ Country: 'France', Capital: 'Paris' }, { Country: 'Germany', Capital: 'Berlin' }, { Country: 'Burkina Faso', Capital: 'Ougadougou' }, { Country: 'Finland', Capital: 'Helsinki' }];
+
+    let intersection = someArray.IntersectSelect("Country", otherArray);
+    expect(intersection).toEqual([{ Country: 'Burkina Faso', Capital: 'Ougadougou' }, { Country: 'Finland', Capital: 'Helsinki' }]);
+  });
+
+  it('can find maximum of arrays using Max,', () => {
+    let inputArray = [1, 2, 3, 4, 5, 6, 7, 15, 4];
+    expect(inputArray.Max()).toBe(15);
+    let inputArrayOfChars = ['a', 'b', 'c', 'd', 'A', 'B', 'C'];
+    expect(inputArrayOfChars.Max()).toBe('d');
+  });
+
+  it('can find maximum of arrays using MaxSelect,', () => {
+    expect(StarWarsMovies.MaxSelect<Movie>("episode_number")).toBe("6");
+  });
+
+  it('can find minimum of arrays using MinSelect,', () => {
+    expect(StarWarsMovies.MinSelect<Movie>("episode_number")).toBe("1");
+  });
+
+  it('can find maximum of arrays using Min,', () => {
+    let inputArray = [1, 2, 3, 4, 5, 6, 7, 15, 4];
+    expect(inputArray.Min()).toBe(1);
+    let inputArrayOfChars = ['a', 'b', 'c', 'd', 'A', 'B', 'C'];
+    expect(inputArrayOfChars.Min()).toBe('A');
+  });
+
+
+  it('can sort using OrderBy', () => {
+    let inputArray: SomeClass[] = [
+      { Num: 1, Name: "Foo" },
+      { Num: -3, Name: "Baze" },
+      { Num: 11, Name: "BelongToUs" },
+      { Num: 5, Name: "AllyoBaze" }
+    ];
+    let sortedArray = inputArray.OrderBy<SomeClass>(s => s.Num);
+
+    let sortedArrayNums = sortedArray.Select<SomeClass>("Num").map(s => s.Num);
+    expect(sortedArrayNums).toEqual([-3, 1, 5, 11], "Expected that the sorting was performed on the input array.");
+  });
+
+  it('can sort using OrderByDescending', () => {
+    let inputArray: SomeClass[] = [
+      { Num: 1, Name: "Foo" },
+      { Num: -3, Name: "Baze" },
+      { Num: 11, Name: "BelongToUs" },
+      { Num: 5, Name: "AllyoBaze" }
+    ];
+    let sortedArray = inputArray.OrderByDescending<SomeClass>(s => s.Num);
+    let sortedArrayNums = sortedArray.Select<SomeClass>("Num").map(s => s.Num);
+    expect(sortedArrayNums).toEqual([11, 5, 1, -3], "Expected that the sorting was performed on the input array.");
+  });
+
+  it('can sort using OrderBy and ThenBy', () => {
+    let inputArray: SomeClass[] = [
+      { Num: 1, Name: "Foo" },
+      { Num: -3, Name: "Baze" },
+      { Num: 11, Name: "BelongToUs" },
+      { Num: 5, Name: "AllyoBaze" }
+    ];
+
+    let sortedArray = inputArray.OrderBy<SomeClass>(s => s.Num).ThenBy<SomeClass>(s => s.Name);
+    console.log(sortedArray);
+    let sortedArrayNames = sortedArray.Select<SomeClass>("Name").map(s => s.Name);
+    console.log(sortedArrayNames);
+    expect(sortedArrayNames).toEqual(["AllyoBaze", "Baze", "BelongToUs", "Foo"], "Expected that the sorting was performed using OrderBy and ThenBy on the input array.");
+  });
+
+
+});
