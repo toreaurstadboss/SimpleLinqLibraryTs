@@ -553,6 +553,9 @@ if (!Array.prototype.SumSelect) {
 
 if (!Array.prototype.FirstOrDefault) {
   Array.prototype.FirstOrDefault = function <T>(condition: predicate<T>): T {
+    if (this === null || this === undefined) {
+      return null;
+    }
     let matchingItems: T[] = this.filter((item: T) => {
       if (condition(item))
         return item;
