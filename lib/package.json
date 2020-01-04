@@ -1,11 +1,14 @@
 {
-  "name": "tslinq",
-  "version": "1.0.0",
-  "description": "A simple Linq like library written in Typescript.",
-  "main": "index.ts",
+  "name": "simpletslinq",
+  "version": "1.0.3",
+  "description": "A simple library that offers much of Linq functionality on Arrays in Js, written in Typescript.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "private": false,
   "scripts": {
-    "test": "ng test"
+    "test": "ng test",
+    "prepublish": "tsc",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",

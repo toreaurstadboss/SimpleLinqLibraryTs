@@ -5,7 +5,7 @@
     "outDir": "./dist",
     "skipLibCheck": true,
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "module": "esnext",
