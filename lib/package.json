@@ -1,0 +1,47 @@
+{
+  "name": "tslinq",
+  "version": "1.0.0",
+  "description": "A simple Linq like library written in Typescript.",
+  "main": "index.ts",
+  "private": false,
+  "scripts": {
+    "test": "ng test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toreaurstadboss/SimpleLinqLibraryTs.git"
+  },
+  "keywords": [
+    "Linq",
+    "Typescript",
+    "HelpLibrary",
+    "Simple"
+  ],
+  "author": "Tore",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/toreaurstadboss/SimpleLinqLibraryTs/issues"
+  },
+  "homepage": "https://github.com/toreaurstadboss/SimpleLinqLibraryTs#readme",
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^0.803.21",
+    "@angular/cli": "~8.2.1",
+    "@angular/compiler-cli": "~8.2.0",
+    "@angular/language-service": "~8.2.0",
+    "@types/jasmine": "~3.3.8",
+    "@types/jasminewd2": "~2.0.3",
+    "@types/node": "~8.9.4",
+    "codelyzer": "^5.0.0",
+    "jasmine-core": "~3.4.0",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~4.1.0",
+    "karma-chrome-launcher": "~2.2.0",
+    "karma-coverage-istanbul-reporter": "~2.0.1",
+    "karma-jasmine": "~2.0.1",
+    "karma-jasmine-html-reporter": "^1.4.0",
+    "protractor": "~5.4.0",
+    "ts-node": "~7.0.0",
+    "tslint": "~5.15.0",
+    "typescript": "~3.5.3"
+  }
+}
