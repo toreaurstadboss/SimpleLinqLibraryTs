@@ -56,6 +56,58 @@ class HeroWithAbility extends Hero {
 
 describe('Array Extensions tests for TsExtensions Linq esque library', () => {
 
+  it('can add multiple items using AddRange operator', () => {
+    let somenums = [1, 2, 3];
+    somenums.AddRange([4, 5, 6]);
+    expect(somenums).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  it('can insert multiple items using InsertRange operator', () => {
+    let somenums = [1, 2, 3];
+    somenums.InsertRange(1, [4, 5, 6]);
+    expect(somenums).toEqual([1, 4, 5, 6, 2, 3]);
+    somenums.InsertRange(somenums.length, [77, 5, 6]);
+    expect(somenums).toEqual([1, 4, 5, 6, 2, 3, 77, 5, 6]);
+  });
+
+  it('can remove items by using RemoveAt operator', () => {
+    let someNums = [1, 3, 4, 5, 8, 11, 14, 13, 12, 18];
+    someNums.RemoveAt(4);
+    expect(someNums.Any(x => x === 8)).toBe(false);
+    someNums.RemoveAt(0);
+    expect(someNums.Any(x => x === 1)).toBe(false);
+  });
+
+  it('can remove items by condition using RemoveWhere operator', () => {
+    let someNums = [1, 3, 4, 5, 8, 11, 14, 13, 12, 18];
+    let onlyEvenNumbers = someNums.RemoveWhere<number>(x => x % 2 === 0);
+    expect(onlyEvenNumbers).toEqual([4, 8, 14, 12, 18]);
+    expect(someNums).toEqual([1, 3, 5, 11, 13]);
+  });
+
+  it('can remove items by condition for an array of objects', () => {
+    let studentList = [
+      <Student>{ StudentID: 1, StudentName: "John", StandardID: 1 },
+      <Student>{ StudentID: 1, StudentName: "Moin", StandardID: 1 },
+      <Student>{ StudentID: 1, StudentName: "Bill", StandardID: 2 },
+      <Student>{ StudentID: 1, StudentName: "Ram", StandardID: 2 },
+      <Student>{ StudentID: 1, StudentName: "Ron" }];
+
+    let standardList = [
+      <Standard>{ StandardID: 1, StandardName: "Standard 1" },
+      <Standard>{ StandardID: 2, StandardName: "Standard 2" },
+      <Standard>{ StandardID: 3, StandardName: "Standard 3" }
+    ];
+
+    let innerJoin = studentList.Join<Student, Standard>(
+      standardList, student => student.StandardID,
+      standard => standard.StandardID,
+      (student, standard) => ({ StudentName: student.StudentName, StandardName: standard.StandardName }));
+
+    innerJoin.RemoveWhere<any>(item => item.StandardName === "Standard 1");
+    expect(innerJoin.Any<any>(item => item.StandardName === "Standard 1")).toBe(false);
+  });
+
   it('can join items of two array of objects using Join operator', () => {
     let studentList = [
       <Student>{ StudentID: 1, StudentName: "John", StandardID: 1 },

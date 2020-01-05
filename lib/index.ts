@@ -10,6 +10,10 @@ declare global {
     First<T>(condition: predicate<T>): T;
     Single<T>(condition: predicate<T>): T;
     LastOrDefault<T>(condition: predicate<T>): T;
+    AddRange<T>(itemsToAdd: T[]);
+    InsertRange<T>(index: number, itemsToAdd: T[]);
+    RemoveAt(index: number): T;
+    RemoveWhere<T>(condition: predicate<T>): T[];
     Join<T, TInner>(otherArray: TInner[], outerKeySelector: keySelector<T>,
       innerKeySelector: keySelector<TInner>, res: resultSelector<T, TInner>): any[];
     Where<T>(condition: predicate<T>): T[];
