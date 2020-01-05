@@ -5,6 +5,10 @@ declare global {
   type keySelector<T> = (arg: T) => any;
   type resultSelector<T, TInner> = (arg: T, arg2: TInner) => any;
   interface Array<T> {
+    AddRange<T>(itemsToAdd: T[]);
+    InsertRange<T>(index: number, itemsToAdd: T[]);
+    RemoveAt(index: number): T;
+    RemoveWhere<T>(condition: predicate<T>): T[];
     FirstOrDefault<T>(condition: predicate<T>): T;
     SingleOrDefault<T>(condition: predicate<T>): T;
     First<T>(condition: predicate<T>): T;
@@ -60,6 +64,92 @@ declare global {
     AggregateSelect<T>(property: (keyof T), accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
   }
 }
+
+if (!Array.prototype.AddRange) {
+  Array.prototype.AddRange = function <T>(itemsToAdd: T[]) {
+    if (this === null || this === undefined || itemsToAdd === null || itemsToAdd === undefined) {
+      throw Error('AddRange failed. Check if array to add or this points to an undefined or null array.');
+    }
+    itemsToAdd.forEach(item => {
+      this.push(item);
+    });
+  }
+}
+
+if (!Array.prototype.InsertRange) {
+  Array.prototype.InsertRange = function InsertRange<T>(index: number, itemsToAdd: T[]) {
+    if (this === null || this === undefined || itemsToAdd === null || itemsToAdd === undefined) {
+      throw Error('AddRange failed. Check if array to add or this points to an undefined or null array.');
+    }
+    if (this.length < index - 1 || index < 0) {
+      throw Error('Invalid operation. Index is out of bounds.');
+    }
+    let arrayKeepingItemsBeforeInsert = [];
+    let deleteItems = 0;
+    for (let i = index; i <= this.length; i++) {
+      const element = this[i];
+      if (element !== null && element !== undefined) {
+        arrayKeepingItemsBeforeInsert.push(element);
+        deleteItems++;
+      }
+    }
+    this.splice(index, deleteItems);
+    itemsToAdd.forEach(el => {
+      this.push(el);
+    });
+    arrayKeepingItemsBeforeInsert.forEach(el => {
+      this.push(el);
+    });
+  }
+
+  if (!Array.prototype.RemoveAt) {
+    Array.prototype.RemoveAt = function <T>(index: number): T {
+      if (this === null || this === undefined) {
+        throw Error('AddRange failed. Check if this array is undefined or null array.');
+      }
+      if (this.length < index || index < 0) {
+        throw Error('Invalid operation. Index is out of bounds.');
+      }
+      const element = this[index];
+      this.splice(index, 1);
+      return element;
+    }
+  }
+
+  if (!Array.prototype.RemoveWhere) {
+    Array.prototype.RemoveWhere = function <T>(condition: predicate<T>): T[] {
+      let matchingItems = [];
+      let matchingItemsIndexes: number[] = [];
+      let inputArray = this;
+      let i = 0;
+      inputArray = this.filter(item => {
+        let returnItem = false;
+        if (condition(item)) {
+          matchingItems.push(item);
+          matchingItemsIndexes.push(i);
+          returnItem = true;
+        }
+        i++;
+        if (returnItem)
+          return matchingItems[matchingItems.length - 1];
+      });
+      let deleteOffset = 0;
+      matchingItemsIndexes.forEach(indx => {
+        this.splice(indx - deleteOffset, 1);
+        deleteOffset++;
+      });
+      return matchingItems;
+    }
+  }
+
+}
+
+
+
+
+
+
+
 
 if (!Array.prototype.Join) {
   Array.prototype.Join = function <T, TInner>(otherArray: TInner[], outerKeySelector: keySelector<T>,
