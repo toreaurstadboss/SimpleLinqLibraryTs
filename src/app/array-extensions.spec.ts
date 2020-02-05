@@ -1,6 +1,6 @@
 import { StarWarsMovies } from "./starwarsmovies";
 import { Movie } from './movie';
-import { NullVisitor } from '@angular/compiler/src/render3/r3_ast';
+
 
 class SomeClass {
   Num: number;
@@ -38,6 +38,24 @@ class Standard extends Student {
 class Weapon {
   name: string;
   strength: number;
+  modifier: WeaponModifier;
+
+  constructor(name: string = "", strength = 0, modifiername = "", modifierprice = 0) {
+    this.name = name;
+    this.strength = strength;
+    this.modifier = new WeaponModifier();
+    this.modifier.name = modifiername;
+    this.modifier.price = modifierprice;
+  }
+}
+
+class WeaponModifier {
+  name: string;
+  price: number;
+  constructor(name: string = "", price: number = 0) {
+    this.name = name;
+    this.price = price;
+  }
 }
 
 class Hero {
@@ -45,13 +63,17 @@ class Hero {
   gender: string;
   age: number;
   weapon: Weapon;
-  constructor(name: string = "", gender: string = "", age: number = 0, weaponname: string = "", weaponstrength: number = 0) {
+  constructor(name: string = "", gender: string = "", age: number = 0, weaponname: string = "", weaponstrength: number = 0,
+    weaponmodifiername = "", weaponmodifierprice = 0) {
     this.name = name;
     this.gender = gender;
     this.age = age;
     this.weapon = new Weapon();
     this.weapon.name = weaponname;
     this.weapon.strength = weaponstrength;
+    this.weapon.modifier = new WeaponModifier();
+    this.weapon.modifier.name = weaponmodifiername;
+    this.weapon.modifier.price = weaponmodifierprice;
   }
 }
 
@@ -148,9 +170,10 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
 
   it('can retrieve props for a class items of an array using GetProperties', () => {
     let heroes: Hero[] = [<Hero>{ name: "Han Solo", age: 44, gender: "M", weapon: { name: "Laser", strength: 100 } },
-    <Hero>{ name: "Leia", age: 29, gender: "F", weapon: { name: "Axe", strength: 10 } },
-    <Hero>{ name: "Luke", age: 24, gender: "M", weapon: { name: "Light sabre", strength: 20 } },
-    <Hero>{ name: "Lando", age: 47, gender: "M", weapon: { name: "Gun", strength: 30 } }];
+    <Hero>{ name: "Leia", age: 29, gender: "F", weapon: { name: "Axe", strength: 10, modifier: { name: "Titanium-forged", price: 1102 } } },
+    <Hero>{ name: "Luke", age: 24, gender: "M", weapon: { name: "Light sabre", strength: 20, modifier: { name: "Sith-Double", price: 1159 } } },
+    <Hero>{ name: "Lando", age: 47, gender: "M", weapon: { name: "Gun", strength: 30, modifier: { name: "Double barrelled", price: 873 } } }];
+
     let foundProps = heroes.GetProperties<Hero>(Hero, false);
 
     let expectedArrayOfProps = ["name", "age", "gender", "weapon", "weapon.name", "weapon.strength"];
@@ -161,7 +184,8 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
   it('can retrieve props for a class only knowing its function', () => {
     let heroes: Hero[] = [];
     let foundProps = heroes.GetProperties(Hero, false);
-    let expectedArrayOfProps = ["this.name", "this.gender", "this.age", "this.weapon", "this.weapon.name", "this.weapon.strength"];
+    let expectedArrayOfProps = ["this.name", "this.gender", "this.age", "this.weapon", "this.weapon.name", "this.weapon.strength",
+      "this.weapon.modifier", "this.weapon.modifier.name", "this.weapon.modifier.price"];
     expect(foundProps).toEqual(expectedArrayOfProps);
     let foundPropsThroughClassFunction = heroes.GetProperties(Hero, true);
     //debugger
