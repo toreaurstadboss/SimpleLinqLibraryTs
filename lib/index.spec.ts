@@ -1,6 +1,7 @@
 import { StarWarsMovies } from "./starwarsmovies";
 import { Movie } from './movie';
 
+
 class SomeClass {
   Num: number;
   Name: string;
@@ -10,7 +11,6 @@ class SomeOtherClass {
   SomeOtherNum: number;
   SomeName: string;
 }
-
 
 class Student {
   StudentID: number;
@@ -35,14 +35,45 @@ class Standard extends Student {
   }
 }
 
+class Weapon {
+  name: string;
+  strength: number;
+  modifier: WeaponModifier;
+
+  constructor(name: string = "", strength = 0, modifiername = "", modifierprice = 0) {
+    this.name = name;
+    this.strength = strength;
+    this.modifier = new WeaponModifier();
+    this.modifier.name = modifiername;
+    this.modifier.price = modifierprice;
+  }
+}
+
+class WeaponModifier {
+  name: string;
+  price: number;
+  constructor(name: string = "", price: number = 0) {
+    this.name = name;
+    this.price = price;
+  }
+}
+
 class Hero {
   name: string;
   gender: string;
   age: number;
-  constructor(name: string = "", gender: string = "", age: number = 0) {
+  weapon: Weapon;
+  constructor(name: string = "", gender: string = "", age: number = 0, weaponname: string = "", weaponstrength: number = 0,
+    weaponmodifiername = "", weaponmodifierprice = 0) {
     this.name = name;
     this.gender = gender;
     this.age = age;
+    this.weapon = new Weapon();
+    this.weapon.name = weaponname;
+    this.weapon.strength = weaponstrength;
+    this.weapon.modifier = new WeaponModifier();
+    this.weapon.modifier.name = weaponmodifiername;
+    this.weapon.modifier.price = weaponmodifierprice;
   }
 }
 
@@ -137,30 +168,28 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
 
   });
 
-  it('can join two numeric arrays using Join and return the expected result', () => {
-    let oneArray = ["One", "Two", "Three", "Four"];
-    let otherArray = ["One", "Two", "Five", "Six"];
-    let result = oneArray.Join<string, string>(otherArray, s => s, t => t, (s, t) => s);
-    expect(result).toEqual(["One", "Two"]);
-  });
+  it('can retrieve props for a class items of an array using GetProperties', () => {
+    let heroes: Hero[] = [<Hero>{ name: "Han Solo", age: 44, gender: "M", weapon: { name: "Laser", strength: 100 } },
+    <Hero>{ name: "Leia", age: 29, gender: "F", weapon: { name: "Axe", strength: 10, modifier: { name: "Titanium-forged", price: 1102 } } },
+    <Hero>{ name: "Luke", age: 24, gender: "M", weapon: { name: "Light sabre", strength: 20, modifier: { name: "Sith-Double", price: 1159 } } },
+    <Hero>{ name: "Lando", age: 47, gender: "M", weapon: { name: "Gun", strength: 30, modifier: { name: "Double barrelled", price: 873 } } }];
 
-  it('can retrieve props for a class items of an array', () => {
-    let heroes: Hero[] = [<Hero>{ name: "Han Solo", age: 44, gender: "M" }, <Hero>{ name: "Leia", age: 29, gender: "F" }, <Hero>{ name: "Luke", age: 24, gender: "M" }, <Hero>{ name: "Lando", age: 47, gender: "M" }];
-    let foundProps = heroes.GetProperties(Hero, false);
-    //debugger
-    let expectedArrayOfProps = ["name", "age", "gender"];
+    let foundProps = heroes.GetProperties<Hero>(Hero, false);
+
+    let expectedArrayOfProps = ["name", "age", "gender", "weapon", "weapon.name", "weapon.strength"];
     expect(foundProps).toEqual(expectedArrayOfProps);
-    expect(heroes.GetProperties(Hero, true)).toEqual(["age", "gender", "name"]);
+    expect(heroes.GetProperties(Hero, false)).toEqual(expectedArrayOfProps);
   });
 
   it('can retrieve props for a class only knowing its function', () => {
     let heroes: Hero[] = [];
     let foundProps = heroes.GetProperties(Hero, false);
-    let expectedArrayOfProps = ["this.name", "this.gender", "this.age"];
+    let expectedArrayOfProps = ["this.name", "this.gender", "this.age", "this.weapon", "this.weapon.name", "this.weapon.strength",
+      "this.weapon.modifier", "this.weapon.modifier.name", "this.weapon.modifier.price"];
     expect(foundProps).toEqual(expectedArrayOfProps);
     let foundPropsThroughClassFunction = heroes.GetProperties(Hero, true);
     //debugger
-    expect(foundPropsThroughClassFunction.SequenceEqual(["this.age", "this.gender", "this.name"])).toBe(true);
+    expect(foundPropsThroughClassFunction.SequenceEqual(expectedArrayOfProps)).toBe(true);
   });
 
   it('can apply method ToDictionary on an array, allowing specificaton of a key selector for the dictionary object', () => {
@@ -184,9 +213,13 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
   });
 
   it('can apply method Cast on an array, casting items to other type', () => {
-    let heroes = [{ name: "Han Solo", age: 44, gender: "M" }, { name: "Leia", age: 29, gender: "F" }, { name: "Luke", age: 24, gender: "M" }, { name: "Lando", age: 47, gender: "M" }];
+    let heroes = [{ name: "Han Solo", age: 44, gender: "M", weapon: { name: "Axe", strength: 10 } },
+    { name: "Leia", age: 29, gender: "F", weapon: { name: "Axe", strength: 10 } },
+    { name: "Luke", age: 24, gender: "M", weapon: { name: "Axe", strength: 10 } },
+    { name: "Lando", age: 47, gender: "M", weapon: { name: "Axe", strength: 10 } }];
     let castedArray = heroes.Cast<HeroWithAbility>(HeroWithAbility);
-    let expectedArrayString = "[{\"name\":\"Han Solo\",\"age\":44,\"gender\":\"M\",\"ability\":null},{\"name\":\"Leia\",\"age\":29,\"gender\":\"F\",\"ability\":null},{\"name\":\"Luke\",\"age\":24,\"gender\":\"M\",\"ability\":null},{\"name\":\"Lando\",\"age\":47,\"gender\":\"M\",\"ability\":null}]";
+
+    let expectedArrayString = "[{\"name\":\"Han Solo\",\"age\":44,\"gender\":\"M\",\"weapon\":{\"name\":\"Axe\",\"strength\":10},\"ability\":null},{\"name\":\"Leia\",\"age\":29,\"gender\":\"F\",\"weapon\":{\"name\":\"Axe\",\"strength\":10},\"ability\":null},{\"name\":\"Luke\",\"age\":24,\"gender\":\"M\",\"weapon\":{\"name\":\"Axe\",\"strength\":10},\"ability\":null},{\"name\":\"Lando\",\"age\":47,\"gender\":\"M\",\"weapon\":{\"name\":\"Axe\",\"strength\":10},\"ability\":null}]";
     expect(JSON.stringify(castedArray)).toBe(expectedArrayString);
   });
 
@@ -216,6 +249,13 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
     let firstMovieStarringJarJar = StarWarsMovies.SingleOrDefault<Movie>(m => m.main_characters.indexOf('Jar Jar Binks') > 0);
     expect(firstMovieStarringJarJar !== null).toBe(true);
     expect(() => StarWarsMovies.SingleOrDefault<Movie>(m => m.main_characters.indexOf('Han Solo') > 0)).toThrow(new Error("Invalid operation. More than one items found."));
+  });
+
+  it('can join two numeric arrays using Join and return the expected result', () => {
+    let oneArray = ["One", "Two", "Three", "Four"];
+    let otherArray = ["One", "Two", "Five", "Six"];
+    let result = oneArray.Join<string, string>(otherArray, s => s, t => t, (s, t) => s);
+    expect(result).toEqual(["One", "Two"]);
   });
 
   it('can return the first or default result using Single on a given array', () => {
