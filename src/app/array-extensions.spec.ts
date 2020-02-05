@@ -35,14 +35,23 @@ class Standard extends Student {
   }
 }
 
+class Weapon {
+  name: string;
+  strength: number;
+}
+
 class Hero {
   name: string;
   gender: string;
   age: number;
-  constructor(name: string = "", gender: string = "", age: number = 0) {
+  weapon: Weapon;
+  constructor(name: string = "", gender: string = "", age: number = 0, weaponname: string = "", weaponstrength: number = 0) {
     this.name = name;
     this.gender = gender;
     this.age = age;
+    this.weapon = new Weapon();
+    this.weapon.name = weaponname;
+    this.weapon.strength = weaponstrength;
   }
 }
 
@@ -137,23 +146,26 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
 
   });
 
-  it('can retrieve props for a class items of an array', () => {
-    let heroes: Hero[] = [<Hero>{ name: "Han Solo", age: 44, gender: "M" }, <Hero>{ name: "Leia", age: 29, gender: "F" }, <Hero>{ name: "Luke", age: 24, gender: "M" }, <Hero>{ name: "Lando", age: 47, gender: "M" }];
+  it('can retrieve props for a class items of an array using GetProperties', () => {
+    let heroes: Hero[] = [<Hero>{ name: "Han Solo", age: 44, gender: "M", weapon: { name: "Laser", strength: 100 } },
+    <Hero>{ name: "Leia", age: 29, gender: "F", weapon: { name: "Axe", strength: 10 } },
+    <Hero>{ name: "Luke", age: 24, gender: "M", weapon: { name: "Light sabre", strength: 20 } },
+    <Hero>{ name: "Lando", age: 47, gender: "M", weapon: { name: "Gun", strength: 30 } }];
     let foundProps = heroes.GetProperties(Hero, false);
     //debugger
-    let expectedArrayOfProps = ["name", "age", "gender"];
+    let expectedArrayOfProps = ["name", "age", "gender", "weapon", "weapon.name", "weapon.strength"];
     expect(foundProps).toEqual(expectedArrayOfProps);
-    expect(heroes.GetProperties(Hero, true)).toEqual(["age", "gender", "name"]);
+    expect(heroes.GetProperties(Hero, false)).toEqual(expectedArrayOfProps);
   });
 
   it('can retrieve props for a class only knowing its function', () => {
     let heroes: Hero[] = [];
     let foundProps = heroes.GetProperties(Hero, false);
-    let expectedArrayOfProps = ["this.name", "this.gender", "this.age"];
+    let expectedArrayOfProps = ["this.name", "this.gender", "this.age", "this.weapon", "this.weapon.name", "this.weapon.strength"];
     expect(foundProps).toEqual(expectedArrayOfProps);
     let foundPropsThroughClassFunction = heroes.GetProperties(Hero, true);
     //debugger
-    expect(foundPropsThroughClassFunction.SequenceEqual(["this.age", "this.gender", "this.name"])).toBe(true);
+    expect(foundPropsThroughClassFunction.SequenceEqual(expectedArrayOfProps)).toBe(true);
   });
 
   it('can apply method ToDictionary on an array, allowing specificaton of a key selector for the dictionary object', () => {
@@ -177,9 +189,13 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
   });
 
   it('can apply method Cast on an array, casting items to other type', () => {
-    let heroes = [{ name: "Han Solo", age: 44, gender: "M" }, { name: "Leia", age: 29, gender: "F" }, { name: "Luke", age: 24, gender: "M" }, { name: "Lando", age: 47, gender: "M" }];
+    let heroes = [{ name: "Han Solo", age: 44, gender: "M", weapon: { name: "Axe", strength: 10 } },
+    { name: "Leia", age: 29, gender: "F", weapon: { name: "Axe", strength: 10 } },
+    { name: "Luke", age: 24, gender: "M", weapon: { name: "Axe", strength: 10 } },
+    { name: "Lando", age: 47, gender: "M", weapon: { name: "Axe", strength: 10 } }];
     let castedArray = heroes.Cast<HeroWithAbility>(HeroWithAbility);
-    let expectedArrayString = "[{\"name\":\"Han Solo\",\"age\":44,\"gender\":\"M\",\"ability\":null},{\"name\":\"Leia\",\"age\":29,\"gender\":\"F\",\"ability\":null},{\"name\":\"Luke\",\"age\":24,\"gender\":\"M\",\"ability\":null},{\"name\":\"Lando\",\"age\":47,\"gender\":\"M\",\"ability\":null}]";
+
+    let expectedArrayString = "[{\"name\":\"Han Solo\",\"age\":44,\"gender\":\"M\",\"weapon\":{\"name\":\"Axe\",\"strength\":10},\"ability\":null},{\"name\":\"Leia\",\"age\":29,\"gender\":\"F\",\"weapon\":{\"name\":\"Axe\",\"strength\":10},\"ability\":null},{\"name\":\"Luke\",\"age\":24,\"gender\":\"M\",\"weapon\":{\"name\":\"Axe\",\"strength\":10},\"ability\":null},{\"name\":\"Lando\",\"age\":47,\"gender\":\"M\",\"weapon\":{\"name\":\"Axe\",\"strength\":10},\"ability\":null}]";
     expect(JSON.stringify(castedArray)).toBe(expectedArrayString);
   });
 

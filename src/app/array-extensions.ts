@@ -879,8 +879,9 @@ if (!Array.prototype.defaultComparerSort) {
 }
 
 class Describer {
+
   private static FRegEx = new RegExp(/(?:this\.)(.+?(?= ))/g);
-  static describe(val: any, parent = false): string[] {
+  static describe(val: any, parent = false, childPropertyPath: string = ""): string[] {
     let isFunction = Object.prototype.toString.call(val) == '[object Function]';
     if (isFunction) {
       let result = [];
@@ -897,10 +898,19 @@ class Describer {
     else {
       if (typeof val == "object") {
         let knownProps: string[] = Object.getOwnPropertyNames(val);
+        var childProperties = knownProps.map(
+          propName => Describer.describe(val[propName], false, childPropertyPath + '.' + propName).map(childPropertyName => childPropertyPath + '.' + childPropertyName)
+        );
+        console.log('knownProps', knownProps);
+        for (var i = 0; i < childProperties.length; i++) {
+          console.log('childProperties[' + i + ']', childProperties[i]);
+          knownProps.AddRange(childProperties[i]);
+        }
+        console.log('knownProps', knownProps);
         return knownProps;
       }
     }
-    return val !== null ? [val.tostring()] : [];
+    return val !== null ? [val.toString()] : [];
   }
 }
 
@@ -910,8 +920,18 @@ class ObjectInitializer {
     properties.forEach(prop => {
       let adjustedProp = prop.replace("this.", "");
       if (inputObject[adjustedProp] === undefined) {
-        //the property is missing
-        inputObject[adjustedProp] = null;
+        if (adjustedProp.indexOf(".") >= 0) {
+          let components = adjustedProp.split('.');
+          let propertyObject = inputObject[components[0]];
+          if (components.Count() > 0 && propertyObject !== undefined) {
+            let subproperties = Object.keys(inputObject[components[0]]);
+            this.initialize(subproperties, propertyObject);
+          }
+        }
+        else {
+          //the property is missing
+          inputObject[adjustedProp] = null;
+        }
       }
     });
 
