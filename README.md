@@ -220,6 +220,5 @@ Modify package.json in lib folder. Change name of library and bump version. Now 
 ```bash
 npm login
 #your credentials please.
-
-
+npm publish
 ```

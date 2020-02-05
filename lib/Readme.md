@@ -203,3 +203,22 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+# Forking this library to your own.
+
+Modify files:
+* array-extensions.ts
+* array-extensions.spec.ts
+
+Copy these two into the lib folder in the files:
+* index.ts
+* index.spec.ts
+
+Modify package.json in lib folder. Change name of library and bump version. Now just publish to Npm.
+
+```bash
+npm login
+#your credentials please.
+npm publish
+```
+
