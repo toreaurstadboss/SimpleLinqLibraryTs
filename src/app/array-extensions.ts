@@ -898,8 +898,9 @@ class Describer {
     else {
       if (typeof val == "object") {
         let knownProps: string[] = Object.getOwnPropertyNames(val);
-        var childProperties = knownProps.map(
-          propName => Describer.describe(val[propName], false, childPropertyPath + '.' + propName).map(childPropertyName => childPropertyPath + '.' + childPropertyName)
+        var childProperties = knownProps.filter(prop => typeof val[prop] == "object").map(
+          propName => this.getChildProperties(val[propName], propName)
+            .map(childPropertyName => this.getChildPropertyPath(propName, childPropertyName))
         );
         console.log('knownProps', knownProps);
         for (var i = 0; i < childProperties.length; i++) {
@@ -911,6 +912,19 @@ class Describer {
       }
     }
     return val !== null ? [val.toString()] : [];
+  }
+
+  static getChildPropertyPath(childPropertyPath, childPropertyName) {
+    return childPropertyPath + "." + childPropertyName;
+  }
+
+  static getChildProperties(val, childPropertyPath): string[] {
+    if (typeof val == "object") {
+      let childPropertyName = Describer.describe(val, false, childPropertyPath + '.' + childPropertyPath);
+      return childPropertyName;
+    }
+    return [];
+
   }
 }
 

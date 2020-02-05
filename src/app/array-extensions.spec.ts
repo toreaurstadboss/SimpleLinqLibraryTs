@@ -151,8 +151,8 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
     <Hero>{ name: "Leia", age: 29, gender: "F", weapon: { name: "Axe", strength: 10 } },
     <Hero>{ name: "Luke", age: 24, gender: "M", weapon: { name: "Light sabre", strength: 20 } },
     <Hero>{ name: "Lando", age: 47, gender: "M", weapon: { name: "Gun", strength: 30 } }];
-    let foundProps = heroes.GetProperties(Hero, false);
-    //debugger
+    let foundProps = heroes.GetProperties<Hero>(Hero, false);
+
     let expectedArrayOfProps = ["name", "age", "gender", "weapon", "weapon.name", "weapon.strength"];
     expect(foundProps).toEqual(expectedArrayOfProps);
     expect(heroes.GetProperties(Hero, false)).toEqual(expectedArrayOfProps);
