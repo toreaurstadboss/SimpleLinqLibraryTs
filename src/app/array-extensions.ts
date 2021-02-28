@@ -53,7 +53,7 @@ declare global {
     OfType<T>(compareObject: T): T[];
     SequenceEqual<T>(compareArray: T): boolean;
     Take<T>(count: number): T[];
-    ToDictionary<T>(keySelector: (arg: T) => string): any;
+    ToDictionary<T>(keySelector: (arg: T) => any): any;
     TakeWhile<T>(condition: predicate<T>): T[];
     SkipWhile<T>(condition: predicate<T>): T[];
     Skip<T>(count: number): T[];
@@ -792,9 +792,21 @@ if (!Array.prototype.GroupBy) {
 }
 
 if (!Array.prototype.ToDictionary) {
-  Array.prototype.ToDictionary = function <T>(keySelector: (arg: T) => string): any[] {
-    let result = this.reduce((r, o) => Object.assign(r, { [keySelector(o)]: o }), {});
-    return result;
+  Array.prototype.ToDictionary = function <T>(keySelector: (arg: T) => any): any {
+    let hash = {};
+    this.map(item => {
+      let key = keySelector(item);
+      if (!(key in hash)) {
+        hash[key] = item;
+      }
+      else {
+        if (!(Array.isArray(hash[key]))) {
+          hash[key] = [hash[key]];
+        }
+        hash[key].push(item);
+      }
+    });
+    return hash;
   }
 }
 

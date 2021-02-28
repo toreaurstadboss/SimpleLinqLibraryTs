@@ -193,21 +193,18 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
   });
 
   it('can apply method ToDictionary on an array, allowing specificaton of a key selector for the dictionary object', () => {
-    let heroes = [{ name: "Han Solo", age: 44, gender: "M" }, { name: "Leia", age: 29, gender: "F" }, { name: "Luke", age: 24, gender: "M" }, { name: "Lando", age: 47, gender: "M" }];
-    let dictionaryOfHeroes = heroes.ToDictionary<Hero>(x => x.name);
+    let heroes = [{ name: "Han Solo", age: 47, gender: "M" }, { name: "Leia", age: 29, gender: "F" }, { name: "Luke", age: 24, gender: "M" }, { name: "Lando", age: 47, gender: "M" }];
+    let dictionaryOfHeroes = heroes.ToDictionary<Hero>(x => x.gender);
 
     let expectedDictionary = {
-      "Han Solo": {
-        name: "Han Solo", age: 44, gender: "M"
-      },
-      "Leia": {
+      "F": {
         name: "Leia", age: 29, gender: "F"
       },
-      "Luke": {
-        name: "Luke", age: 24, gender: "M"
-      },
-      "Lando":
+      "M": [
+        { name: "Han Solo", age: 47, gender: "M" },
+        { name: "Luke", age: 24, gender: "M" },
         { name: "Lando", age: 47, gender: "M" }
+      ]
     };
     expect(dictionaryOfHeroes).toEqual(expectedDictionary);
   });

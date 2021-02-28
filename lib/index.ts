@@ -791,10 +791,23 @@ if (!Array.prototype.GroupBy) {
   }
 }
 
+
 if (!Array.prototype.ToDictionary) {
-  Array.prototype.ToDictionary = function <T>(keySelector: (arg: T) => string): any[] {
-    let result = this.reduce((r, o) => Object.assign(r, { [keySelector(o)]: o }), {});
-    return result;
+  Array.prototype.ToDictionary = function <T>(keySelector: (arg: T) => any): any {
+    let hash = {};
+    this.map(item => {
+      let key = keySelector(item);
+      if (!(key in hash)) {
+        hash[key] = item;
+      }
+      else {
+        if (!(Array.isArray(hash[key]))) {
+          hash[key] = [hash[key]];
+        }
+        hash[key].push(item);
+      }
+    });
+    return hash;
   }
 }
 
