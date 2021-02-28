@@ -222,3 +222,5 @@ npm login
 npm publish
 ```
 
+Note: Before publish you will need to run npm install if not done yet as the prepublish step runs tsc, Typescript compiler.
+
