@@ -101,6 +101,23 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
     expect(somenums).toEqual([1, 4, 5, 6, 2, 3, 77, 5, 6]);
   });
 
+  it('can flatten multiple arrays into a single array', () => {
+    let oneArray = [1, 2, [3, 3]];
+    let anotherArray = [4, [4, 5], 6];
+    let thirdArray = [7, 7, [7, 7]];
+    let threeArrays = [oneArray, anotherArray, thirdArray];
+    let flattenedArrays = oneArray.Flatten([anotherArray, thirdArray]);
+    let isEqualInContentToExpectedFlattenedArray = flattenedArrays.SequenceEqual([1, 2, 3, 3, 4, 4, 5, 6, 7, 7, 7, 7]);
+    expect(isEqualInContentToExpectedFlattenedArray).toBe(true);
+  });
+
+  it('can flatten one deep array into a single array', () => {
+    let oneArray = [1, 2, [3, 3]];
+    let flattenedArrays = oneArray.Flatten(null);
+    let isEqualInContentToExpectedFlattenedArray = flattenedArrays.SequenceEqual([1, 2, 3, 3]);
+    expect(isEqualInContentToExpectedFlattenedArray).toBe(true);
+  });
+
   it('can remove items by using RemoveAt operator', () => {
     let someNums = [1, 3, 4, 5, 8, 11, 14, 13, 12, 18];
     someNums.RemoveAt(4);

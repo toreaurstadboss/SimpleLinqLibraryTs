@@ -62,6 +62,7 @@ declare global {
     ElementAtOrDefault<T>(index: number);
     Aggregate<T>(accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
     AggregateSelect<T>(property: (keyof T), accumulator: any, currentValue: any, reducerFunc: (accumulator: any, currentValue: any) => any): any;
+    Flatten<T>(otherArrays: T[][]): T[];
   }
 }
 
@@ -73,6 +74,29 @@ if (!Array.prototype.AddRange) {
     itemsToAdd.forEach(item => {
       this.push(item);
     });
+  }
+}
+
+if (!Array.prototype.Flatten) {
+  Array.prototype.Flatten = function <T>(otherArrays: T[][] = null) {   
+    let flattenedArrayOfThis = [...flatten(this, Infinity)];
+    if (otherArrays == null || otherArrays == undefined) {
+      return flattenedArrayOfThis;
+    }
+    return [...flattenedArrayOfThis, ...flatten(otherArrays, Infinity)];
+  }
+}
+
+function* flatten(array, depth) {
+  if (depth === undefined) {
+    depth = 1;
+  }
+  for (const item of array) {
+    if (Array.isArray(item) && depth > 0) {
+      yield* flatten(item, depth - 1);
+    } else {
+      yield item;
+    }
   }
 }
 

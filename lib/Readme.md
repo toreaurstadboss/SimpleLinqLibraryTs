@@ -210,7 +210,7 @@ Modify files:
 * array-extensions.ts
 * array-extensions.spec.ts
 
-Copy these two into the lib folder in the files:
+Copy modifications done into these two into the lib folder in the files:
 * index.ts
 * index.spec.ts
 

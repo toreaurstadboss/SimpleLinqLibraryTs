@@ -1,7 +1,7 @@
 {
   "name": "simpletslinq",
-  "version": "1.0.14",
-  "description": "A simple library that offers much of Linq functionality on Arrays in Js, written in Typescript.",
+  "version": "1.0.15",
+  "description": "A simple library with utility method with Linq-like functionality on Arrays in Js, written in Typescript. Adds utility methods to Array prototype for easy way of calling utility methods directly on arrays. Contains additional functionality also with helper methods.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "private": false,

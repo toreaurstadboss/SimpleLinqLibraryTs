@@ -85,7 +85,25 @@ class HeroWithAbility extends Hero {
   }
 }
 
+
 describe('Array Extensions tests for TsExtensions Linq esque library', () => {
+
+  it('can flatten multiple arrays into a single array', () => {
+    let oneArray = [1, 2, [3, 3]];
+    let anotherArray = [4, [4, 5], 6];
+    let thirdArray = [7, 7, [7, 7]];
+    let threeArrays = [oneArray, anotherArray, thirdArray];
+    let flattenedArrays = oneArray.Flatten([anotherArray, thirdArray]);
+    let isEqualInContentToExpectedFlattenedArray = flattenedArrays.SequenceEqual([1, 2, 3, 3, 4, 4, 5, 6, 7, 7, 7, 7]);
+    expect(isEqualInContentToExpectedFlattenedArray).toBe(true);
+  });
+
+  it('can flatten one deep array into a single array', () => {
+    let oneArray = [1, 2, [3, 3]];
+    let flattenedArrays = oneArray.Flatten(null);
+    let isEqualInContentToExpectedFlattenedArray = flattenedArrays.SequenceEqual([1, 2, 3, 3]);
+    expect(isEqualInContentToExpectedFlattenedArray).toBe(true);
+  });
 
   it('can add multiple items using AddRange operator', () => {
     let somenums = [1, 2, 3];

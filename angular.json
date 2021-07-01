@@ -133,5 +133,8 @@
       }
     }
   },
-  "defaultProject": "TsExtensions"
+  "defaultProject": "TsExtensions",
+  "cli": {
+    "analytics": "62d69685-b1c0-41d5-90c3-28d3acf5dc29"
+  }
 }
