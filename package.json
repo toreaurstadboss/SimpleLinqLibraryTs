@@ -12,7 +12,7 @@
   },
   "private": true,
   "dependencies": {
-    "@angular-devkit/schematics": "^13.0.3",
+    "@angular-devkit/schematics": "^11.2.15",
     "@angular/animations": "~11.2.14",
     "@angular/common": "~11.2.14",
     "@angular/compiler": "~11.2.14",
