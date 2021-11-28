@@ -159,7 +159,7 @@ Methods available in SimpleTsLinq:
 
 Note - this is not 'Linq'! It is similar to Linq in syntax and functionality, but not a full fledged LinqProvider for Typescript. It does also not star delayed execution, this is possible in other libraries (such as TsLinq). It could though be used for many scenarios, still. The goal is to help out developers coming from a  C# and Linq background to do array operations in Typescript with same kind of syntax as Linq. This library is very easy to understand and extend. You can fork the repo from Github linked also here (see Homepage and repository links on npmjs portal to the right).
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.2.1.
+This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.0.0.
 It is however built from a lib folder within. There are no dependencies other than the library itself,
 plus two libs for ES5 compability. (There are multiple dev dependencies to the Angular compiler and Angular libs, if you want to fork this library).
 

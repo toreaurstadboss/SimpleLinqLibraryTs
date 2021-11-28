@@ -25,8 +25,8 @@ declare global {
     Any<T>(condition: predicate<T>): boolean;
     Contains<T>(item: T): boolean;
     All<T>(condition: predicate<T>): boolean;
-    MaxSelect<T>(property: (keyof T)): any;
-    MinSelect<T>(property: (keyof T)): any;
+    MaxBy<T>(property: (keyof T)): any;
+    MinBy<T>(property: (keyof T)): any;
     Average<T>(): number;
     AverageSelect<T>(property: (keyof T)): number;
     Max(): any;
@@ -46,7 +46,7 @@ declare global {
     SumSelect<T>(property: (keyof T)): any;
     Intersect<T>(otherArray: T[]): T[];
     IntersectSelect<T>(property: (keyof T), otherArray: T[]): T[];
-    MinSelect<T>(property: (keyof T)): any;
+    MinBy<T>(property: (keyof T)): any;
     OrderBy<T>(sortMember: sortingValue<T>): T[];
     OrderByDescending<T>(sortMember: sortingValue<T>): T[];
     ThenBy<T>(sortMember: sortingValue<T>): T[];
@@ -611,8 +611,8 @@ if (!Array.prototype.ThenBy) {
   }
 }
 
-if (!Array.prototype.MaxSelect) {
-  Array.prototype.MaxSelect = function <T>(property: (keyof T)): any {
+if (!Array.prototype.MaxBy) {
+  Array.prototype.MaxBy = function <T>(property: (keyof T)): any {
     let result = this.Select(property).map(n => n[property]).sort(this.defaultComparerSort).LastOrDefault(x => x);
     return result;
   }
@@ -628,8 +628,8 @@ if (!Array.prototype.Max) {
   }
 }
 
-if (!Array.prototype.MinSelect) {
-  Array.prototype.MinSelect = function <T>(property: (keyof T)): any {
+if (!Array.prototype.MinBy) {
+  Array.prototype.MinBy = function <T>(property: (keyof T)): any {
     let result = this.Select(property).map(n => n[property]).sort(this.defaultComparerSort).FirstOrDefault(x => x);
     return result;
   }
@@ -988,10 +988,3 @@ class ObjectInitializer {
   }
 
 }
-
-
-
-
-
-
-

@@ -478,11 +478,11 @@ describe('Array Extensions tests for TsExtensions Linq esque library', () => {
   });
 
   it('can find maximum of arrays using MaxSelect,', () => {
-    expect(StarWarsMovies.MaxSelect<Movie>("episode_number")).toBe("6");
+    expect(StarWarsMovies.MaxBy<Movie>("episode_number")).toBe("6");
   });
 
   it('can find minimum of arrays using MinSelect,', () => {
-    expect(StarWarsMovies.MinSelect<Movie>("episode_number")).toBe("1");
+    expect(StarWarsMovies.MinBy<Movie>("episode_number")).toBe("1");
   });
 
   it('can find maximum of arrays using Min,', () => {
